@@ -1,6 +1,5 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
-import * as React from "react";
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
@@ -21,7 +20,7 @@ export const router = createBrowserRouter([
     errorElement: <RootError />,
     children: [
       { path: "login", lazy: () => import("./auth/Login.js") },
-      { path: "signup", lazy: () => import("./auth/Login.js") },
+      { path: "signup", lazy: () => import("./auth/Signup.js") },
       { path: "privacy", lazy: () => import("./legal/Privacy.js") },
       { path: "terms", lazy: () => import("./legal/Terms.js") },
     ],

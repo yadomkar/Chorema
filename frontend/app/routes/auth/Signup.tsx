@@ -19,12 +19,6 @@ import {
 } from "./Login.hooks.js";
 import { Notice } from "./Notice.js";
 
-/**
- * The login and registration page inspired by Notion. Example:
- *
- *    https://www.notion.so/login
- *    https://www.notion.so/signup
- */
 export function Component(): JSX.Element {
   const [state, setState] = useState();
   const handleChange = useHandleChange(setState);
@@ -59,62 +53,65 @@ export function Component(): JSX.Element {
         />
       )}
 
-      {state.otpSent && (
-        <Alert sx={{ mb: 2 }} severity="success">
-          Please enter the One Time Password (OTP) that has been sent to your
-          email address.
-        </Alert>
-      )}
-
       <form id="login-form" onSubmit={handleSubmit}>
-        {state.otpSent ? (
+        <>
           <TextField
-            key="code"
-            name="code"
+            key="username"
+            name="username"
+            type="text"
             variant="outlined"
-            label="OTP code"
-            placeholder="Enter OTP code..."
+            label="Username"
+            placeholder="Enter your username..."
             InputLabelProps={{ shrink: true }}
-            InputProps={{ sx: { fontWeight: 700 } }}
             onChange={handleChange}
             disabled={submitInFlight}
-            autoComplete="off"
-            autoFocus
             fullWidth
             required
+            style={{ marginBottom: "1rem" }}
           />
-        ) : (
-          <>
-            <TextField
-              key="email"
-              name="email"
-              type="email"
-              variant="outlined"
-              label="Email"
-              placeholder="Enter your email address..."
-              InputLabelProps={{ shrink: true }}
-              onChange={handleChange}
-              disabled={submitInFlight}
-              fullWidth
-              required
-            />
-            <br />
-            <br />
-            <TextField
-              key="passwords"
-              name="password"
-              type="password"
-              variant="outlined"
-              label="Password"
-              placeholder="Enter your password..."
-              InputLabelProps={{ shrink: true }}
-              onChange={handleChange}
-              disabled={submitInFlight}
-              fullWidth
-              required
-            />
-          </>
-        )}
+          <TextField
+            key="name"
+            name="name"
+            type="text"
+            variant="outlined"
+            label="Name"
+            placeholder="Enter your name..."
+            InputLabelProps={{ shrink: true }}
+            onChange={handleChange}
+            disabled={submitInFlight}
+            fullWidth
+            required
+            style={{ marginBottom: "1rem" }}
+          />
+          <TextField
+            key="email"
+            name="email"
+            type="email"
+            variant="outlined"
+            label="Email"
+            placeholder="Enter your email address..."
+            InputLabelProps={{ shrink: true }}
+            onChange={handleChange}
+            disabled={submitInFlight}
+            fullWidth
+            required
+            style={{ marginBottom: "1rem" }}
+          />
+          <TextField
+            key="passwords"
+            name="password"
+            type="password"
+            variant="outlined"
+            label="Password"
+            placeholder="Enter your password..."
+            InputLabelProps={{ shrink: true }}
+            onChange={handleChange}
+            disabled={submitInFlight}
+            fullWidth
+            required
+            style={{ marginBottom: "1rem" }}
+          />
+        </>
       </form>
 
       <Button
@@ -123,7 +120,7 @@ export function Component(): JSX.Element {
         type="submit"
         variant="outlined"
         size="large"
-        children="Sign In"
+        children="Sign Up"
         disabled={submitInFlight}
         fullWidth
       />
@@ -155,4 +152,4 @@ export function Component(): JSX.Element {
   );
 }
 
-Component.displayName = "Login";
+Component.displayName = "Signup";

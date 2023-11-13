@@ -2,9 +2,12 @@
 /* SPDX-License-Identifier: MIT */
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
+
 import { AppLayout } from "../layout/AppLayout.js";
 import { BaseLayout } from "../layout/BaseLayout.js";
 import { RootError } from "../layout/RootError.js";
+
+import LandingPage from "./landingpage/index.js";
 
 /**
  * Application routes
@@ -29,6 +32,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: "dashboard", lazy: () => import("./dashboard/Dashboard.js") },
+      // eslint-disable-next-line
+      { path: "home", element: <LandingPage /> },
       {
         path: "settings",
         lazy: () => import("./settings/SettingsLayout.js"),

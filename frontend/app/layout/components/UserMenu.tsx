@@ -41,7 +41,7 @@ export function UserMenu(props: UserMenuProps): JSX.Element {
 
       <MenuItem>
         <ListItemIcon sx={{ minWidth: 40 }} children={<Brightness4 />} />
-        <ListItemText primary="Dark Mode" />
+        {/* <ListItemText primary="Dark Mode" /> */}
         <Switch
           name="theme"
           checked={theme?.palette?.mode === "dark"}

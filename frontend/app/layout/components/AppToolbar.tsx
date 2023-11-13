@@ -17,7 +17,6 @@ import { Link as NavLink } from "../../common/Link.js";
 import { useCurrentUser } from "../../core/auth.js";
 import { Logo } from "./Logo.js";
 import { NotificationsMenu } from "./NotificationsMenu.js";
-import { ThemeButton } from "./ThemeButton.js";
 import { UserMenu } from "./UserMenu.js";
 
 export function AppToolbar(props: AppToolbarProps): JSX.Element {
@@ -64,7 +63,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 
         {/* Account related controls (icon buttons) */}
 
-        {me !== undefined && <ThemeButton sx={{ mr: 1 }} />}
+        {/* {me !== undefined && <ThemeButton sx={{ mr: 1 }} />} */}
 
         {me && (
           <Chip
@@ -137,7 +136,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             variant="outlined"
             href="/signup"
             color="inherit"
-            children="Create an account"
+            children="Signup"
           />
         )}
       </Toolbar>

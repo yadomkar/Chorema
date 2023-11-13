@@ -6,7 +6,7 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import { usePageEffect } from "../../core/page.js";
 
 export function Component(): JSX.Element {
-  usePageEffect({ title: "React App" });
+  usePageEffect({ title: "Chorema" });
 
   return (
     <Container sx={{ py: "20vh" }} maxWidth="sm">

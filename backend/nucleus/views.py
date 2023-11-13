@@ -11,6 +11,19 @@ User = get_user_model()
 
 
 class UserSignupView(APIView):
+    """
+    Create a new user with email, first name, last name, and password.
+
+    Request body:
+
+    {
+        "email": "",
+        "first_name": "",
+        "last_name": "",
+        "password": ""
+    }
+    """
+
     def post(self, request):
         serializer = UserSignupSerializer(data=request.data)
         if serializer.is_valid():
@@ -20,6 +33,15 @@ class UserSignupView(APIView):
 
 
 class UserLoginView(APIView):
+    """
+    Login a user with email and password.
+
+    Request body:
+    {
+        "email": ""
+        "password": ""
+    }
+    """
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -34,6 +56,9 @@ class UserLoginView(APIView):
 
 
 class UserLogoutView(APIView):
+    """
+    Logout a user.
+    """
     def post(self, request):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)

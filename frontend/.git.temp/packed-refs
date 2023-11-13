@@ -1,0 +1,17 @@
+# pack-refs with: peeled fully-peeled sorted 
+d5cf707e44c3b930c4c5fce46db3c53dee22dedd refs/remotes/origin/feature/apollo
+6b789a759cc281ba7493722633b14d4ec36107c2 refs/remotes/origin/feature/apollo-pure
+fc3bc2915375cc16cd7c8dee67dccf51230b5886 refs/remotes/origin/feature/react-intl
+2d16e492cf3b58c1f3ce6c6237b44d0cb8a34364 refs/remotes/origin/feature/redux
+bc5cbf1cf4594a05fa3ebf2382772f0c867cb5a7 refs/remotes/origin/main
+002a34f631b641562fd47a85938c3b2477b9e6ab refs/remotes/origin/master
+a549a58f8d2473b6449cec119d3395bfeeb2fddf refs/remotes/origin/yeoman
+c23e08cf38b9e9e64eb9a9e9d159e543ba239b67 refs/remotes/origin/yeoman-generator
+6b4520ac1cb8d40df3aad3989f38f18730da1f3d refs/tags/v0.3.0
+678749fd0e93d090a357190fee55d6fa87e2ae3f refs/tags/v0.3.1
+340dc190af0487c1fc0e6bbd7c8e9eaa92c2f772 refs/tags/v0.3.2
+dc3939968a1df333e969d9ae9f5f64a717a81b32 refs/tags/v0.3.3
+cc69ec585fa7b5c95a14b5c14b67cd5388b1e7dc refs/tags/v0.4.0
+cd06e6d32bce9e76d832372c49add0104f65e3d3 refs/tags/v0.4.1
+0bb004c04c14d628f0e08d7e21c826e5cf5593ee refs/tags/v0.5.0
+05ceb64eb50db3f7a7eb596f84c941e5a948f6b6 refs/tags/v0.5.1

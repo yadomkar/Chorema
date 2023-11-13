@@ -9,16 +9,25 @@ from .constants import STATUS_CHOICES, STATUS_PENDING
 class UserProfileManager(BaseUserManager):
     """ Manager for user profiles """
 
-    def create_user(self, email, name, password=None) -> "UserProfile":
+    def create_user(self, email, first_name, last_name, password=None) -> "UserProfile":
         """Create a new user profile"""
         if not email:
             raise ValueError('Invalid Email')
         # normalize email, convert second half to lowercase
         email = self.normalize_email(email)
-        user = self.model(email=email, name=name)
+        user = self.model(email=email, first_name=first_name, last_name=last_name)
         user.set_password(password)
         user.save(using=self._db)
         return user
+
+    def create_superuser(self, email, first_name, last_name, password):
+        """Create and return a new superuser with an email and password."""
+        user = self.create_user(email, first_name, last_name, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+
 
 
 class UserProfile(AbstractBaseUser):

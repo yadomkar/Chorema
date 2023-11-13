@@ -1,8 +1,10 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
-
 import { Api, GitHub } from "@mui/icons-material";
 import { Box, Button, Container, Typography } from "@mui/material";
+
+import * as React from "react";
+
 import { usePageEffect } from "../../core/page.js";
 
 export function Component(): JSX.Element {

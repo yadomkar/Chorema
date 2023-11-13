@@ -1,5 +1,6 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
+import * as React from "react";
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
@@ -30,7 +31,7 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     errorElement: <RootError />,
     children: [
-      { index: true, element: <Navigate to="/dashboard" replace /> },
+      { index: true, element: <Navigate to="/home" replace /> },
       { path: "dashboard", lazy: () => import("./dashboard/Dashboard.js") },
       // eslint-disable-next-line
       { path: "home", element: <LandingPage /> },

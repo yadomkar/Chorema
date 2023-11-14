@@ -10,7 +10,7 @@
     "scripts"
   ],
   "scripts": {
-    "postinstall": "husky install && node ./scripts/postinstall.js",
+    "postinstall": "node ./scripts/postinstall.js",
     "update-schema": "node ./scripts/update-schema.js",
     "start": "yarn workspace app start",
     "lint": "eslint --cache --report-unused-disable-directives .",
@@ -55,7 +55,6 @@
     "endOfLine": "lf"
   },
   "dependencies": {
-    "axios": "^1.6.1",
-    "husky": "^8.0.3"
+    "axios": "^1.6.1"
   }
 }

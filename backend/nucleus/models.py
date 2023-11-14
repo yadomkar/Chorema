@@ -1,7 +1,7 @@
 import uuid
 
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, AbstractUser
 
 from .constants import STATUS_CHOICES, STATUS_PENDING
 
@@ -9,19 +9,18 @@ from .constants import STATUS_CHOICES, STATUS_PENDING
 class UserProfileManager(BaseUserManager):
     """ Manager for user profiles """
 
-    def create_user(self, email, first_name, last_name, password=None) -> "UserProfile":
+    def create_user(self, email, first_name, last_name, password=None):
         """Create a new user profile"""
         if not email:
-            raise ValueError('Invalid Email')
-        # normalize email, convert second half to lowercase
+            raise ValueError('Users must have an email address')
         email = self.normalize_email(email)
-        user = self.model(email=email, first_name=first_name, last_name=last_name)
+        user = self.model(email=email, username=email, first_name=first_name, last_name=last_name)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, first_name, last_name, password):
-        """Create and return a new superuser with an email and password."""
+        """Create and return a new superuser with given details."""
         user = self.create_user(email, first_name, last_name, password)
         user.is_staff = True
         user.is_superuser = True
@@ -29,8 +28,7 @@ class UserProfileManager(BaseUserManager):
         return user
 
 
-
-class UserProfile(AbstractBaseUser):
+class UserProfile(AbstractUser):
     """ Database model for users in system """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(max_length=255, unique=True)

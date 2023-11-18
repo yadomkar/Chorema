@@ -94,11 +94,12 @@ class Chore(models.Model):
 class Transaction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     karma_value = models.DecimalField(max_digits=10, decimal_places=2)
     group = models.ForeignKey(Group, on_delete=models.DO_NOTHING, null=True, db_constraint=False)
     users_involved = models.ManyToManyField(UserProfile, through='TransactionParticipant')
+    done_by = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='done_by')
     chore = models.ForeignKey(Chore, on_delete=models.SET_NULL, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
     settlements = models.ManyToManyField(Debt)
@@ -116,9 +117,9 @@ class TransactionParticipant(models.Model):
 
     note = models.TextField(null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        self.net_balance = self.karma_earned - self.karma_owed
-        super(TransactionParticipant, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.net_balance = self.karma_earned - self.karma_owed
+    #     super(TransactionParticipant, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.first_name} earned {self.karma_earned} karma points"

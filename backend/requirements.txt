@@ -8,3 +8,4 @@ typing_extensions==4.8.0
 djangorestframework==3.14.0
 django-cors-headers==3.8.0
 ipython
+networkx==3.2.1

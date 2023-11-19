@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Group, Chore, Transaction
+from .models import Group, Chore, Transaction, Debt
 
 User = get_user_model()
 
@@ -19,6 +19,7 @@ class UserSignupSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
 
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -39,7 +40,6 @@ class GroupSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
-
 class ChoreSerializer(serializers.ModelSerializer):
     assigned_to = serializers.SlugRelatedField(
         queryset=User.objects.all(),
@@ -53,7 +53,8 @@ class ChoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chore
-        fields = ['id', 'name', 'description', 'karma_value', 'group', 'assigned_to', 'is_recurring', 'created_at', 'due_date', 'completed_at', 'status']
+        fields = ['id', 'name', 'description', 'karma_value', 'group', 'assigned_to', 'is_recurring', 'created_at',
+                  'due_date', 'completed_at', 'status']
         read_only_fields = ['id', 'created_at']
 
     def create(self, validated_data):
@@ -72,6 +73,7 @@ class ChoreSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 # class TransactionSerializer(serializers.Serializer):
 #     # from_user = serializers.SlugRelatedField(
 #     #     queryset=User.objects.all(),
@@ -88,4 +90,10 @@ class ChoreSerializer(serializers.ModelSerializer):
 class TransactionSerializer(serializers.Serializer):
     class Meta:
         model = Transaction
+        fields = '__all__'
+
+
+class DebtSerializer(serializers.Serializer):
+    class Meta:
+        model = Debt
         fields = '__all__'

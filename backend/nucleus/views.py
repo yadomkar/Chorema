@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSignupSerializer, UserLoginSerializer, GroupSerializer, ChoreSerializer, \
-    TransactionSerializer
+    TransactionSerializer, DebtSerializer
 from django.contrib.auth import get_user_model
 from .models import Group, Chore, Transaction, Debt, TransactionParticipant
 
@@ -342,3 +342,33 @@ class CreateTransactionView(APIView):
         transaction.users_involved.set(users_involved)
         transaction.save()
         return Response({'message': 'Expense Created successfully'})
+
+
+class ListGroupDebtsView(APIView):
+    """
+    Send group id and get list of debts for that group.
+    """
+
+    def get(self, request, group_id):
+        try:
+            group = Group.objects.get(id=group_id)
+            users = group.members.all()
+
+            response = []
+            for user in users:
+                debt_data = {}
+                debit = 0
+                credit = 0
+                given = Debt.objects.filter(group=group, from_user=user)
+                taken = Debt.objects.filter(group=group, to_user=user)
+                for debt in given:
+                    debt_data[debt.to_user.get_full_name()] = debt_data.get(debt.to_user.get_full_name(), 0) - debt.karma
+                    debit -= debt.karma
+                for debt in taken:
+                    debt_data[debt.from_user.get_full_name()] = debt_data.get(debt.from_user.get_full_name(), 0) + debt.karma
+                    credit += debt.karma
+                response.append({'user': user.get_full_name(), 'debit': debit, 'credit': credit, "data": [f'User {user.get_full_name()} owes {debt_data[x]} to user {x}' if debt_data[x] > 0 else f'User {x} owes {-1 * debt_data[x]} to {user.get_full_name()}' for x in debt_data if x != user.get_full_name() and debt_data[x] != 0],})
+
+            return Response(response, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)

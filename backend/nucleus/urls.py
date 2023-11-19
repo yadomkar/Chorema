@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import UserSignupView, UserLoginView, UserLogoutView, DeleteUserView, \
     CreateChoreView, ListChoresView, ChoreDetailView, UpdateChoreView, DeleteChoreView, CreateGroupView, \
-    ListGroupsView, GroupDetailView, UpdateGroupView, DeleteGroupView, CreateTransactionView
+    ListGroupsView, GroupDetailView, UpdateGroupView, DeleteGroupView, CreateTransactionView, ListGroupDebtsView
 
 
 urlpatterns = [
@@ -18,6 +18,7 @@ urlpatterns = [
     path('groups/<uuid:group_id>/', GroupDetailView.as_view(), name='detail_group'),
     path('groups/update/<uuid:group_id>/', UpdateGroupView.as_view(), name='update_group'),
     path('groups/delete/<uuid:group_id>/', DeleteGroupView.as_view(), name='delete_group'),
+    path('groups/debts/<uuid:group_id>/', ListGroupDebtsView.as_view(), name='list_group_debts'),
 
     path('chores/create/', CreateChoreView.as_view(), name='create_chore'),
     path('chores/list/<uuid:group_id>/', ListChoresView.as_view(), name='list_chores'),

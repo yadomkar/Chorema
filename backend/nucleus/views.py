@@ -216,7 +216,9 @@ class UpdateGroupView(APIView):
                         'last_name': "User",
                         'password': 'password'
                     }
-                    member = UserSignupSerializer(data=new_user_data)
+                    serializer = UserSignupSerializer(data=new_user_data)
+                    serializer.save()
+                    member = User.objects.get(email=member_email)
                 members.append(member.id)
         serializer.initial_data['members'] = members
 

@@ -199,7 +199,16 @@ class UpdateGroupView(APIView):
         members = []
         if member_emails:
             for member_email in member_emails:
-                member = User.objects.get(email=member_email)
+                try:
+                    member = User.objects.get(email=member_email)
+                except User.DoesNotExist:
+                    new_user_data = {
+                        'email': member_email,
+                        'first_name': "Temp",
+                        'last_name': "User",
+                        'password': 'password'
+                    }
+                    member = UserSignupSerializer(data=new_user_data)
                 members.append(member.id)
         serializer.initial_data['members'] = members
 

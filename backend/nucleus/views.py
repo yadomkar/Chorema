@@ -1,5 +1,7 @@
+import networkx as nx
 from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,6 +9,12 @@ from .serializers import UserSignupSerializer, UserLoginSerializer, GroupSeriali
     TransactionSerializer, DebtSerializer
 from django.contrib.auth import get_user_model
 from .models import Group, Chore, Transaction, Debt, TransactionParticipant
+
+import io
+import matplotlib.pyplot as plt
+from django.http import HttpResponse
+from nucleus.utils.graph import create_debt_graph, calculate_minimized_transactions
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -336,7 +344,8 @@ class CreateTransactionView(APIView):
             transaction_participant = TransactionParticipant.objects.create(user=user, transaction=transaction,
                                                                             karma_earned=(
                                                                                 0 if user != done_by else per_member_share),
-                                                                            karma_owed=per_member_share, net_balance=(-per_member_share if user != done_by else karma_value - per_member_share))
+                                                                            karma_owed=per_member_share, net_balance=(
+                    -per_member_share if user != done_by else karma_value - per_member_share))
 
         transaction.settlements.set(settlements)
         transaction.users_involved.set(users_involved)
@@ -362,13 +371,95 @@ class ListGroupDebtsView(APIView):
                 given = Debt.objects.filter(group=group, from_user=user)
                 taken = Debt.objects.filter(group=group, to_user=user)
                 for debt in given:
-                    debt_data[debt.to_user.get_full_name()] = debt_data.get(debt.to_user.get_full_name(), 0) - debt.karma
+                    debt_data[debt.to_user.get_full_name()] = debt_data.get(debt.to_user.get_full_name(),
+                                                                            0) - debt.karma
                     debit -= debt.karma
                 for debt in taken:
-                    debt_data[debt.from_user.get_full_name()] = debt_data.get(debt.from_user.get_full_name(), 0) + debt.karma
+                    debt_data[debt.from_user.get_full_name()] = debt_data.get(debt.from_user.get_full_name(),
+                                                                              0) + debt.karma
                     credit += debt.karma
-                response.append({'user': user.get_full_name(), 'debit': debit, 'credit': credit, "data": [f'User {user.get_full_name()} owes {debt_data[x]} to user {x}' if debt_data[x] > 0 else f'User {x} owes {-1 * debt_data[x]} to {user.get_full_name()}' for x in debt_data if x != user.get_full_name() and debt_data[x] != 0],})
+                response.append({'user': user.get_full_name(), 'debit': debit, 'credit': credit, "data": [
+                    f'User {user.get_full_name()} owes {debt_data[x]} to user {x}' if debt_data[
+                                                                                          x] > 0 else f'User {x} owes {-1 * debt_data[x]} to {user.get_full_name()}'
+                    for x in debt_data if x != user.get_full_name() and debt_data[x] != 0], })
 
             return Response(response, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
             return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# ------------------ GRAPH ------------------
+
+@api_view(['GET'])
+def graph_image(request, group_id):
+    graph = create_debt_graph(group_id)
+    # graph = simplify_debts(graph)
+    calculate_minimized_transactions(graph)
+
+    for u, v, data in graph.edges(data=True):
+        print(f"{u} owes {v}: {data['capacity']}")
+
+    # Create a buffer to store image data
+    buffer = io.BytesIO()
+
+    # Create the plot
+    plt.figure(figsize=(12, 8))
+
+
+    # pos = nx.spring_layout(graph)  # Positions for all nodes
+    # pos = nx.circular_layout(graph)
+    # pos = nx.kamada_kawai_layout(graph)
+    # pos = nx.shell_layout(graph)
+    # pos = nx.spectral_layout(graph)
+    pos = nx.planar_layout(graph)
+    # pos = nx.random_layout(graph)
+
+    # labels = nx.get_node_attributes(graph, 'label')
+
+    # Draw nodes and edges
+    # nx.draw(graph, pos, labels=labels, with_labels=True, node_size=700, node_color='lightblue')
+
+    nx.draw_networkx_nodes(graph, pos, node_color='r', node_size=100, alpha=1)
+    nx.draw_networkx_labels(graph, pos, font_size=8)
+
+    # ax = plt.gca()
+    nx.draw_networkx_edges(graph, pos, connectionstyle='arc3, rad=0.1')
+
+    # for e in graph.edges:
+    #     ax.annotate("",
+    #                 xy=pos[e[0]], xycoords='data',
+    #                 xytext=pos[e[1]], textcoords='data',
+    #                 arrowprops=dict(arrowstyle="->", color="0.5",
+    #                                 shrinkA=5, shrinkB=5,
+    #                                 patchA=None, patchB=None,
+    #                                 connectionstyle="arc3,rad=rrr".replace('rrr', str(0.3 * e[2])
+    #                                                                        ),
+    #                                 ),
+    #                 )
+    # plt.axis('off')
+
+    # Draw edge labels (weights)
+    edge_capacities = nx.get_edge_attributes(graph, 'capacity')
+    # Format edge labels, e.g., 'u-v: capacity'
+    edge_labels = {(u, v): f'{capacity}' for (u, v), capacity in edge_capacities.items()}
+    # for (u, v) in edge_labels:
+    #     print(f'{User.objects.get(id=u).first_name} owes {User.objects.get(id=v).first_name}: {edge_labels[(u, v)]}')
+
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=8, label_pos=0.3)
+
+
+    plt.title("Debt Graph")
+
+    # Save the plot to the buffer
+    canvas = FigureCanvas(plt.gcf())
+    canvas.print_png(buffer)
+    plt.close()  # Close the plot after saving
+
+    # Reset the buffer position to the start
+    buffer.seek(0)
+
+    # Send the buffer in a HTTP response
+    response = HttpResponse(buffer.getvalue(), content_type='image/png')
+    response['Content-Length'] = str(len(response.content))
+
+    return response

@@ -5,15 +5,15 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSignupSerializer, UserLoginSerializer, GroupSerializer, ChoreSerializer, \
-    TransactionSerializer, DebtSerializer
+from .serializers import (UserSignupSerializer, UserLoginSerializer, GroupSerializer, ChoreSerializer,
+                          TransactionSerializer, DebtSerializer)
 from django.contrib.auth import get_user_model
-from .models import Group, Chore, Transaction, Debt, TransactionParticipant
+from .models import Group, Chore, Transaction, Debt, TransactionParticipant, MinimizedDebt
 
 import io
 import matplotlib.pyplot as plt
 from django.http import HttpResponse
-from nucleus.utils.graph import create_debt_graph, calculate_minimized_transactions
+from nucleus.utils.graph import (create_debt_graph, calculate_minimized_transactions, create_minimized_debt_graph)
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 from rest_framework.authentication import TokenAuthentication
@@ -90,52 +90,6 @@ class DeleteUserView(APIView):
         return Response({'message': f'User {user_email} deleted successfully'})
 
 
-#
-# class CreateGroupView(APIView):
-#     serializer_class = GroupSerializer
-#
-#     def post(self, request):
-#         user_email = request.data.get('user_email')
-#         request.data['members'] = [User.objects.get(email=user_email).id]
-#         serializer = self.serializer_class(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response({'message': f'Group {serializer.data.get("group_name")} Created successfully'})
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#
-#
-# class ViewUserGroupsView(APIView):
-#     def get(self, request):
-#         user_email = request.data.get('user_email')
-#         user = User.objects.get(email=user_email)
-#         groups = Group.objects.filter(members__in=[user.id])
-#         serializer = GroupSerializer(groups, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-#
-
-# class AddUserToGroupView(APIView):
-#     def post(self, request):
-#         group_name = request.data.get('group_name')
-#         user_email = request.data.get('user_email')
-#         user = User.objects.get(email=user_email)
-#         group = Group.objects.get(group_name=group_name)
-#         if user not in group.members.all():
-#             group.members.add(user.id)
-#             return Response({'message': f'User {user_email} successfully added to group {group.group_name}'})
-#         return Response({'message': 'User already exists in the group'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class BulkAddUsersToGroupView(APIView):
-#     def post(self, request):
-#         group_name = request.data.get('group_name')
-#         user_emails = request.data.get('user_emails')
-#         group = Group.objects.get(group_name=group_name)
-#         for user_email in user_emails:
-#             user = User.objects.get(email=user_email)
-#             if user not in group.members.all():
-#                 group.members.add(user.id)
-#         return Response({'message': f'Users {user_emails} successfully added to group {group.group_name}'})
-#
 
 class RemoveUserFromGroupView(APIView):
     def post(self, request):
@@ -227,17 +181,6 @@ class UpdateGroupView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-# class BulkAddUsersToGroupView(APIView):
-#     def post(self, request):
-#         group_id = request.data.get('group_id')
-#         user_emails = request.data.get('user_emails')
-#         group = Group.objects.get(group_id=group_id)
-#         for user_email in user_emails:
-#             user = User.objects.get(email=user_email)
-#             if user not in group.members.all():
-#                 group.members.add(user.id)
-#         return Response({'message': f'Users {user_emails} successfully added to group {group.group_name}'})
 
 
 class DeleteGroupView(APIView):
@@ -400,6 +343,27 @@ class ListGroupDebtsView(APIView):
             return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class EqualizeKarmaView(APIView):
+    def get(self, request, group_id):
+        try:
+            group = Group.objects.get(id=group_id)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
+        group.delete_minimized_debts()
+        graph = create_debt_graph(group_id)
+        minimized_graph = calculate_minimized_transactions(graph)
+        debts = []
+        for edge in minimized_graph.edges(data=True):
+            from_user = edge[0]
+            to_user = edge[1]
+            weight = edge[2]['capacity']
+
+            debt = MinimizedDebt.objects.create(from_user=from_user, to_user=to_user, karma=weight)
+            debts.append(debt)
+
+        return Response(debts, status=status.HTTP_200_OK)
+
+
 # ------------------ GRAPH ------------------
 
 @api_view(['GET'])
@@ -416,7 +380,6 @@ def graph_image(request, group_id):
 
     # Create the plot
     plt.figure(figsize=(12, 8))
-
 
     # pos = nx.spring_layout(graph)  # Positions for all nodes
     # pos = nx.circular_layout(graph)
@@ -458,7 +421,6 @@ def graph_image(request, group_id):
     #     print(f'{User.objects.get(id=u).first_name} owes {User.objects.get(id=v).first_name}: {edge_labels[(u, v)]}')
 
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=8, label_pos=0.3)
-
 
     plt.title("Debt Graph")
 

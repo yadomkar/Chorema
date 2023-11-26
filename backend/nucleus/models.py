@@ -65,13 +65,29 @@ class Debt(models.Model):
         return f'{self.to_user.first_name} owes {self.karma} to {self.from_user.first_name}'
 
 
+class MinimizedDebt(models.Model):
+    from_user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='from_user_minimized')
+    to_user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='to_user_minimized')
+    karma = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.to_user.first_name} owes {self.karma} to {self.from_user.first_name}'
+
+
 class Group(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     group_name = models.CharField(max_length=255, unique=True)
     debts = models.ManyToManyField(Debt, blank=True)
+    minimized_debts = models.ManyToManyField(MinimizedDebt, blank=True)
     members = models.ManyToManyField(UserProfile)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def delete_minimized_debts(self):
+        """Deletes all MinimizedDebt records related to this group."""
+        self.minimized_debts.all().delete()
+        return
 
 
 class Chore(models.Model):

@@ -1,6 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from nucleus.models import Group, Debt
+from nucleus.models import Group, Debt, MinimizedDebt
 
 
 # def create_debt_graph(group_id):
@@ -50,14 +50,44 @@ def create_debt_graph(group_id):
         for debt in Debt.objects.filter(group=group):
             from_user = debt.to_user.id
             to_user = debt.from_user.id
-            weight = debt.karma if debt.karma is not None else 0
+            capacity = debt.karma if debt.karma is not None else 0
 
             if G.has_edge(from_user, to_user):
                 # If an edge already exists, add to its weight
-                G[from_user][to_user]['capacity'] += weight
+                G[from_user][to_user]['capacity'] += capacity
             else:
                 # Otherwise, create a new edge with the initial weight
-                G.add_edge(from_user, to_user, capacity=weight)
+                G.add_edge(from_user, to_user, capacity=capacity)
+
+        return G
+
+    except Group.DoesNotExist:
+        return None
+
+
+def create_minimized_debt_graph(group_id):
+    try:
+        group = Group.objects.get(id=group_id)
+        users = group.members.all()
+
+        G = nx.DiGraph()  # Directed graph, since debts are directional
+
+        # Add nodes
+        for user in users:
+            G.add_node(user.id, label=user.first_name)
+
+        # Add or update edges with debts as weights
+        for debt in MinimizedDebt.objects.filter(group=group):
+            from_user = debt.to_user.id
+            to_user = debt.from_user.id
+            capacity = debt.karma if debt.karma is not None else 0
+
+            if G.has_edge(from_user, to_user):
+                # If an edge already exists, add to its weight
+                G[from_user][to_user]['capacity'] += capacity
+            else:
+                # Otherwise, create a new edge with the initial weight
+                G.add_edge(from_user, to_user, capacity=capacity)
 
         return G
 

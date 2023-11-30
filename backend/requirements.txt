@@ -10,3 +10,4 @@ django-cors-headers==3.8.0
 ipython
 networkx==3.2.1
 matplotlib==3.8.2
+django-cors-headers==4.3.1

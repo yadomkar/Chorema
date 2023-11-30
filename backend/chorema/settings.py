@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-*kte&d(tpdr2hn&5yn3e%3cggzquxvdgz^7u-4p1az^n(180r=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     'nucleus',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 ]
 
 AUTH_USER_MODEL = 'nucleus.UserProfile'
@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'chorema.urls'

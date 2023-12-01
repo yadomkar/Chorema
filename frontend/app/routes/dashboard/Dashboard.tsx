@@ -1,46 +1,62 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
-import { Api, GitHub } from "@mui/icons-material";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 
-import * as React from "react";
+import FindInPageIcon from '@mui/icons-material/FindInPage';
 
+
+import { useEffect, useState } from "react";
+import { getAllGroups } from "../../api/index.js";
+import { useCurrentUserWithRedirection } from "../../core/auth.js";
 import { usePageEffect } from "../../core/page.js";
+
+
+const useGetAllGroups = () => {
+  const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      const response = await getAllGroups();
+      const data = response.data;;
+      setGroups(data);
+      setLoading(false);
+    };
+    fetchGroups();
+  }, []);
+
+  return { groups, loading };
+}
 
 export function Component(): JSX.Element {
   usePageEffect({ title: "Chorema" });
+  const { groups, loading } = useGetAllGroups();
+
+
+  const user = useCurrentUserWithRedirection();
+
+  if (loading) {
+    return (
+      <Container sx={{ py: "20vh" }} maxWidth="sm">
+        <FindInPageIcon />
+      </Container>
+    );
+  }
 
   return (
-    <Container sx={{ py: "20vh" }} maxWidth="sm">
-      <Typography sx={{ mb: 2 }} variant="h1" align="center">
-        Welcome to React Starter Kit!
+    <Container sx={{ py: "20px" }} maxWidth="sm">
+      <Typography sx={{ mb: 2 }} variant="h3" align="center">
+        Welcome {user?.first_name ?? "to Chorema"}
       </Typography>
 
-      <Typography sx={{ mb: 4 }} variant="h3" align="center">
-        The web&apos;s most popular Jamstack React template.
-      </Typography>
 
       <Box
         sx={{
-          display: "flex",
           justifyContent: "center",
           gridGap: "1rem",
         }}
       >
-        <Button
-          variant="outlined"
-          size="large"
-          href={`/api`}
-          children="Explorer API"
-          startIcon={<Api />}
-        />
-        <Button
-          variant="outlined"
-          size="large"
-          href="https://github.com/kriasoft/react-starter-kit"
-          children="View on GitHub"
-          startIcon={<GitHub />}
-        />
+
       </Box>
     </Container>
   );

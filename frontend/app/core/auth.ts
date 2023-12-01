@@ -3,6 +3,7 @@
 
 import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import { atom } from "recoil";
 import { useOpenLoginDialog } from "../dialogs/LoginDialog.js";
 import { UserDetailObject } from "../routes/auth/Login.hooks.js";
@@ -96,6 +97,16 @@ export function useCurrentUser() {
   const user: UserDetailObject = JSON.parse(localStorage.getItem('user') || '{}');
 
   return token && session_id ? user : null;
+}
+
+export const useCurrentUserWithRedirection = () => {
+  const user = useCurrentUser();
+  const navigate = useNavigate();
+
+  if (!user) {
+    navigate('/login');
+  }
+  return user;
 }
 
 export function useSignIn() {

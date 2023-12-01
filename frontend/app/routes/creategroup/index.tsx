@@ -63,18 +63,16 @@ const CreateGroup = () => {
         />
       </form>
 
-      <div>
-        <Button
-          color="inherit"
-          form="create-group-form"
-          type="submit"
-          variant="outlined"
-          size="large"
-          children="Create now"
-          fullWidth
-          sx={{ mt: 2 }}
-        />
-      </div>
+      <Button
+        color="inherit"
+        form="create-group-form"
+        type="submit"
+        variant="outlined"
+        size="large"
+        children="Create now"
+        fullWidth
+        sx={{ mt: 2 }}
+      />
 
     </Container>
   );

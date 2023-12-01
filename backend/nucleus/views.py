@@ -175,9 +175,10 @@ class UpdateGroupView(APIView):
 
     def put(self, request, group_id):
         group = Group.objects.get(id=group_id)
+        members = list(group.members.all())
+        members = [member.id for member in members]
         serializer = GroupSerializer(group, data=request.data)
         member_emails = request.data.get('members')
-        members = []
         if member_emails:
             for member_email in member_emails:
                 try:
@@ -190,9 +191,11 @@ class UpdateGroupView(APIView):
                         'password': 'password'
                     }
                     serializer = UserSignupSerializer(data=new_user_data)
-                    serializer.save()
+                    if serializer.is_valid():
+                        serializer.save()
                     member = User.objects.get(email=member_email)
                 members.append(member.id)
+        members = list(set(members))
         serializer.initial_data['members'] = members
 
         if serializer.is_valid():

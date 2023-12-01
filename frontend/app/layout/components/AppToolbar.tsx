@@ -53,7 +53,6 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 
         <span style={{ flexGrow: 1 }} />
 
-        {/* Account related controls (icon buttons) */}
 
         {/* {me !== undefined && <ThemeButton sx={{ mr: 1 }} />} */}
 
@@ -96,7 +95,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             onClick={openUserMenu}
           />
         )}
-        {me === null && (
+        {!me && (
           <Button
             component={NavLink}
             variant="text"
@@ -105,7 +104,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             children="Log in"
           />
         )}
-        {me === null && (
+        {!me && (
           <Button
             component={NavLink}
             variant="outlined"

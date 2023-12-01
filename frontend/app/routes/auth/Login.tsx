@@ -2,14 +2,11 @@
 /* SPDX-License-Identifier: MIT */
 
 import {
-  Alert,
   Button,
   Container,
-  Divider,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
 import {
   useHandleChange,
   useHandleSignin,
@@ -27,8 +24,6 @@ export function Component(): JSX.Element {
   const [state, setState] = useState();
   const handleChange = useHandleChange(setState);
   const handleSignIn = useHandleSignin(state);
-  const { pathname } = useLocation();
-  const isSignUp = pathname === "/signup";
 
   return (
     <Container
@@ -47,14 +42,6 @@ export function Component(): JSX.Element {
         align="center"
         children="Login"
       />
-
-      {state.error && (
-        <Alert
-          sx={{ mb: 2, order: -2 }}
-          severity="error"
-          children={state.error}
-        />
-      )}
 
 
       <form id="login-form" onSubmit={handleSignIn}>
@@ -96,10 +83,6 @@ export function Component(): JSX.Element {
         fullWidth
       />
 
-      <Divider
-        sx={{ color: "divider", order: isSignUp ? undefined : -1 }}
-        children="OR"
-      />
       <Notice sx={{ mt: 4 }} />
     </Container >
   );

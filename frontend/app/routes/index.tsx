@@ -31,8 +31,17 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/home" replace /> },
       { path: "dashboard", lazy: () => import("./dashboard/Dashboard.js") },
-      { path: "create-group", element: <CreateGroup /> },
-
+      {
+        path: "group",
+        children: [
+          { index: true, element: <Navigate to='/group/create' replace />, },
+          { path: "create", element: <CreateGroup />, },
+          // {
+          //   path: "account",
+          //   lazy: () => import("./settings/AccountDetails.js"),
+          // },
+        ]
+      },
       // eslint-disable-next-line
       { path: "home", element: <LandingPage /> },
       {
@@ -46,9 +55,10 @@ export const router = createBrowserRouter([
           },
         ],
       },
-    ],
-  },
-]);
+    ]
+  }
+],
+)
 
 // Clean up on module reload (HMR)
 // https://vitejs.dev/guide/api-hmr

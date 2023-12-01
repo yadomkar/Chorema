@@ -5,7 +5,8 @@ import { Box, Button, CircularProgress, Container, Divider, Typography } from "@
 import { FindInPage } from '@mui/icons-material';
 
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { usePageEffect } from "../../core/page.js";
 import { getAllGroups } from "../api/index.js";
 import { useCurrentUserWithRedirection } from "../utils/index.js";
@@ -33,8 +34,13 @@ export function Component(): JSX.Element {
 
 
   const user = useCurrentUserWithRedirection();
+  const navigate = useNavigate();
 
   const { groups, loading } = useGetAllGroups();
+
+  const onCreateGroup = useCallback(() => {
+    navigate('/group/create')
+  }, [navigate])
 
 
   if (loading) {
@@ -74,7 +80,7 @@ export function Component(): JSX.Element {
             display: 'flex',
           }}
         >
-          <Button variant="outlined">
+          <Button variant="outlined" onClick={onCreateGroup}>
             Create group
           </Button>
         </Box>

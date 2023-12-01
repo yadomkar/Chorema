@@ -10,10 +10,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import { AuthIcon } from "../../icons/AuthIcon.js";
 import {
   useHandleChange,
-  useHandleSignIn,
+  useHandleSignin,
   useHandleSubmit,
   useState,
 } from "./Login.hooks.js";
@@ -28,7 +27,7 @@ import { Notice } from "./Notice.js";
 export function Component(): JSX.Element {
   const [state, setState] = useState();
   const handleChange = useHandleChange(setState);
-  const handleSignIn = useHandleSignIn(setState);
+  const handleSignIn = useHandleSignin(state);
   const [handleSubmit, submitInFlight] = useHandleSubmit(state);
   const { pathname } = useLocation();
   const isSignUp = pathname === "/signup";
@@ -48,7 +47,7 @@ export function Component(): JSX.Element {
         sx={{ mb: 2, fontWeight: 800, order: -3 }}
         variant="h1"
         align="center"
-        children={isSignUp ? "Sign Up" : "Login"}
+        children="Login"
       />
 
       {state.error && (
@@ -59,62 +58,36 @@ export function Component(): JSX.Element {
         />
       )}
 
-      {state.otpSent && (
-        <Alert sx={{ mb: 2 }} severity="success">
-          Please enter the One Time Password (OTP) that has been sent to your
-          email address.
-        </Alert>
-      )}
 
-      <form id="login-form" onSubmit={handleSubmit}>
-        {state.otpSent ? (
-          <TextField
-            key="code"
-            name="code"
-            variant="outlined"
-            label="OTP code"
-            placeholder="Enter OTP code..."
-            InputLabelProps={{ shrink: true }}
-            InputProps={{ sx: { fontWeight: 700 } }}
-            onChange={handleChange}
-            disabled={submitInFlight}
-            autoComplete="off"
-            autoFocus
-            fullWidth
-            required
-          />
-        ) : (
-          <>
-            <TextField
-              key="email"
-              name="email"
-              type="email"
-              variant="outlined"
-              label="Email"
-              placeholder="Enter your email address..."
-              InputLabelProps={{ shrink: true }}
-              onChange={handleChange}
-              disabled={submitInFlight}
-              fullWidth
-              required
-            />
-            <br />
-            <br />
-            <TextField
-              key="passwords"
-              name="password"
-              type="password"
-              variant="outlined"
-              label="Password"
-              placeholder="Enter your password..."
-              InputLabelProps={{ shrink: true }}
-              onChange={handleChange}
-              disabled={submitInFlight}
-              fullWidth
-              required
-            />
-          </>
-        )}
+      <form id="login-form" onSubmit={handleSignIn}>
+        <TextField
+          key="email"
+          name="email"
+          type="email"
+          variant="outlined"
+          label="Email"
+          placeholder="Enter your email address..."
+          InputLabelProps={{ shrink: true }}
+          onChange={handleChange}
+          disabled={submitInFlight}
+          fullWidth
+          required
+        />
+        <br />
+        <br />
+        <TextField
+          key="passwords"
+          name="password"
+          type="password"
+          variant="outlined"
+          label="Password"
+          placeholder="Enter your password..."
+          InputLabelProps={{ shrink: true }}
+          onChange={handleChange}
+          disabled={submitInFlight}
+          fullWidth
+          required
+        />
       </form>
 
       <Button
@@ -132,26 +105,8 @@ export function Component(): JSX.Element {
         sx={{ color: "divider", order: isSignUp ? undefined : -1 }}
         children="OR"
       />
-
-      <Button
-        sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light" ? "white" : undefined,
-          order: isSignUp ? undefined : -2,
-        }}
-        color="inherit"
-        type="submit"
-        variant="outlined"
-        size="large"
-        children="Continue as anonymous"
-        startIcon={<AuthIcon color="inherit" variant="anonymous" />}
-        onClick={handleSignIn}
-        data-method="anonymous"
-        fullWidth
-      />
-
       <Notice sx={{ mt: 4 }} />
-    </Container>
+    </Container >
   );
 }
 

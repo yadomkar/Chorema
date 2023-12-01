@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { ArrowDropDown, NotificationsNone } from "@mui/icons-material";
+import { ArrowDropDown } from "@mui/icons-material";
 import {
   AppBar,
   AppBarProps,
@@ -16,7 +16,6 @@ import * as React from "react";
 import { Link as NavLink } from "../../common/Link.js";
 import { useCurrentUser } from "../../core/auth.js";
 import { Logo } from "./Logo.js";
-import { NotificationsMenu } from "./NotificationsMenu.js";
 import { UserMenu } from "./UserMenu.js";
 
 export function AppToolbar(props: AppToolbarProps): JSX.Element {
@@ -29,9 +28,6 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
     notifications: null as HTMLElement | null,
   });
 
-  function openNotificationsMenu() {
-    setAnchorEl((x) => ({ ...x, notifications: menuAnchorRef.current }));
-  }
 
   function closeNotificationsMenu() {
     setAnchorEl((x) => ({ ...x, notifications: null }));
@@ -78,31 +74,14 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
               ".MuiChip-avatar": { width: 32, height: 32 },
             }}
             component={NavLink}
-            href="/"
+            href="/dashboard"
             avatar={
               <Avatar
-                alt={me?.displayName || (me?.isAnonymous ? "Anonymous" : "")}
-                src={me?.photoURL || undefined}
+                alt={me?.displayName}
+                src={undefined}
               />
             }
-            label={getFirstName(
-              me?.displayName || (me?.isAnonymous ? "Anonymous" : ""),
-            )}
-          />
-        )}
-        {me && (
-          <IconButton
-            sx={{
-              marginLeft: (x) => x.spacing(1),
-              backgroundColor: (x) =>
-                x.palette.mode === "light"
-                  ? x.palette.grey[300]
-                  : x.palette.grey[700],
-              width: 40,
-              height: 40,
-            }}
-            children={<NotificationsNone />}
-            onClick={openNotificationsMenu}
+            label={me?.displayName || ""}
           />
         )}
         {me && (
@@ -143,11 +122,6 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
 
       {/* Pop-up menus */}
 
-      <NotificationsMenu
-        anchorEl={anchorEl.notifications}
-        onClose={closeNotificationsMenu}
-        PaperProps={{ sx: { marginTop: "8px" } }}
-      />
       <UserMenu
         anchorEl={anchorEl.userMenu}
         onClose={closeUserMenu}
@@ -155,10 +129,6 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
       />
     </AppBar>
   );
-}
-
-function getFirstName(displayName: string): string {
-  return displayName && displayName.split(" ")[0];
 }
 
 type AppToolbarProps = Omit<AppBarProps, "children">;

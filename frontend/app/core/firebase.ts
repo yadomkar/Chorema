@@ -5,10 +5,10 @@ import { getAnalytics } from "firebase/analytics";
 import { FirebaseError, initializeApp, type FirebaseApp } from "firebase/app";
 import {
   FacebookAuthProvider,
-  fetchSignInMethodsForEmail,
-  getAuth,
   GoogleAuthProvider,
   OAuthCredential,
+  fetchSignInMethodsForEmail,
+  getAuth,
   signInAnonymously,
   signInWithPopup,
   type Auth,

@@ -1,9 +1,8 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { SignInMethod, signIn } from "../../core/firebase.js";
+
+import axios from "axios";
 
 /**
  * Handles login / signup via Email
@@ -30,6 +29,63 @@ export function useHandleSubmit(
     ),
     inFlight,
   ];
+}
+
+
+
+export function useHandleSignup(data: any) {
+  const navigate = useNavigate();
+  return React.useCallback(async (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log(data);
+
+    const { email, password, first_name, last_name } = data;
+
+
+    const payload = {
+      email,
+      password,
+      first_name,
+      last_name
+    }
+    console.log('useHandleSignup');
+
+
+    try {
+      const res = await axios.post('/api/signup/', payload, { baseURL: 'http://localhost/' });
+
+      console.log(res);
+
+      alert('Signup successful!... Redirecting to login page.!!')
+
+      navigate('/login')
+
+    } catch (err) {
+
+      alert('Signup failed! Please try again.')
+    }
+  }, [data, navigate]);
+}
+
+export const useHandleSignin = (data: { email: string; password: string }) => {
+  const navigate = useNavigate();
+  return React.useCallback(async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const { email, password } = data;
+
+    const res: any = await axios.post('/api/login/', { email, password }, { baseURL: 'http://localhost/' });
+
+    const { session_id, token } = res.data;
+
+    localStorage.setItem('session_id', session_id);
+    localStorage.setItem('token', token);
+    localStorage.setItem('email', email);
+
+    alert('Login successful!... Redirecting to dashboard.!!')
+
+    navigate('/dashboard')
+  }, [data, navigate]);
 }
 
 /**

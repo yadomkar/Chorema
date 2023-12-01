@@ -3,7 +3,7 @@
 
 import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
-import { atom, useRecoilValueLoadable } from "recoil";
+import { atom } from "recoil";
 import { useOpenLoginDialog } from "../dialogs/LoginDialog.js";
 import {
   auth,
@@ -88,8 +88,12 @@ export const CurrentUser = atom<User | null>({
  *   }
  */
 export function useCurrentUser() {
-  const value = useRecoilValueLoadable(CurrentUser);
-  return value.state === "loading" ? undefined : value.valueOrThrow();
+
+  const token = localStorage.getItem('token');
+  const email = localStorage.getItem('email');
+  const session_id = localStorage.getItem('session_id');
+
+  return token && email && session_id ? { token, email, session_id } : null;
 }
 
 export function useSignIn() {
@@ -110,8 +114,15 @@ export function useSignIn() {
   );
 }
 
+export const signOut = () => {
+  return new Promise((resolve) => {
+    localStorage.clear();
+    resolve(true);
+  });
+}
+
 export function useSignOut() {
-  return React.useCallback(() => auth.signOut(), []);
+  return React.useCallback(() => signOut(), []);
 }
 
 /**
@@ -179,5 +190,6 @@ export {
   type SignInMethod,
   type SignInOptions,
   type User,
-  type UserCredential,
+  type UserCredential
 };
+

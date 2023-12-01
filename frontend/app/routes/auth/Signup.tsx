@@ -10,12 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import { AuthIcon } from "../../icons/AuthIcon.js";
 import {
   useHandleChange,
   useHandleSignIn,
+  useHandleSignup,
   useHandleSubmit,
-  useState,
+  useState
 } from "./Login.hooks.js";
 import { Notice } from "./Notice.js";
 
@@ -23,6 +23,7 @@ export function Component(): JSX.Element {
   const [state, setState] = useState();
   const handleChange = useHandleChange(setState);
   const handleSignIn = useHandleSignIn(setState);
+  const handleSignup = useHandleSignup(state);
   const [handleSubmit, submitInFlight] = useHandleSubmit(state);
   const { pathname } = useLocation();
   const isSignUp = pathname === "/signup";
@@ -53,15 +54,15 @@ export function Component(): JSX.Element {
         />
       )}
 
-      <form id="login-form" onSubmit={handleSubmit}>
+      <form id="login-form" onSubmit={handleSignup}>
         <>
           <TextField
-            key="username"
-            name="username"
+            key="first_name"
+            name="first_name"
             type="text"
             variant="outlined"
-            label="Username"
-            placeholder="Enter your username..."
+            label="First name"
+            placeholder="Enter your First name..."
             InputLabelProps={{ shrink: true }}
             onChange={handleChange}
             disabled={submitInFlight}
@@ -70,12 +71,12 @@ export function Component(): JSX.Element {
             style={{ marginBottom: "1rem" }}
           />
           <TextField
-            key="name"
-            name="name"
+            key="last_name"
+            name="last_name"
             type="text"
             variant="outlined"
-            label="Name"
-            placeholder="Enter your name..."
+            label="Last name"
+            placeholder="Enter your Last name..."
             InputLabelProps={{ shrink: true }}
             onChange={handleChange}
             disabled={submitInFlight}
@@ -98,7 +99,7 @@ export function Component(): JSX.Element {
             style={{ marginBottom: "1rem" }}
           />
           <TextField
-            key="passwords"
+            key="password"
             name="password"
             type="password"
             variant="outlined"
@@ -128,23 +129,6 @@ export function Component(): JSX.Element {
       <Divider
         sx={{ color: "divider", order: isSignUp ? undefined : -1 }}
         children="OR"
-      />
-
-      <Button
-        sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light" ? "white" : undefined,
-          order: isSignUp ? undefined : -2,
-        }}
-        color="inherit"
-        type="submit"
-        variant="outlined"
-        size="large"
-        children="Continue as anonymous"
-        startIcon={<AuthIcon color="inherit" variant="anonymous" />}
-        onClick={handleSignIn}
-        data-method="anonymous"
-        fullWidth
       />
 
       <Notice sx={{ mt: 4 }} />

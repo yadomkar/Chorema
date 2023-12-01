@@ -1,14 +1,14 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Container, Divider, Typography } from "@mui/material";
 
-import FindInPageIcon from '@mui/icons-material/FindInPage';
+import { FindInPage } from '@mui/icons-material';
 
 
 import { useEffect, useState } from "react";
-import { getAllGroups } from "../../api/index.js";
-import { useCurrentUserWithRedirection } from "../../core/auth.js";
 import { usePageEffect } from "../../core/page.js";
+import { getAllGroups } from "../api/index.js";
+import { useCurrentUserWithRedirection } from "../utils/index.js";
 
 
 const useGetAllGroups = () => {
@@ -30,15 +30,54 @@ const useGetAllGroups = () => {
 
 export function Component(): JSX.Element {
   usePageEffect({ title: "Chorema" });
-  const { groups, loading } = useGetAllGroups();
 
 
   const user = useCurrentUserWithRedirection();
 
+  const { groups, loading } = useGetAllGroups();
+
+
   if (loading) {
     return (
       <Container sx={{ py: "20vh" }} maxWidth="sm">
-        <FindInPageIcon />
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (groups?.length === 0) {
+    return (
+      <Container sx={{ py: "20px" }} maxWidth="sm">
+        <Typography sx={{ mb: 2 }} variant="h3" align="center">
+          Welcome {user?.first_name ?? "to Chorema"}
+        </Typography>
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <FindInPage fontSize="large" />
+        </Box>
+
+        <Typography sx={{ my: 2 }} variant="h5" align="center">
+          You are not currently in any groups.
+        </Typography>
+
+        <Typography sx={{ my: 2 }} variant="h5" align="center">
+          Go ahead and create one!
+        </Typography>
+
+        <Box
+          sx={{
+            justifyContent: "center",
+            display: 'flex',
+          }}
+        >
+          <Button variant="outlined">
+            Create group
+          </Button>
+        </Box>
       </Container>
     );
   }
@@ -48,6 +87,8 @@ export function Component(): JSX.Element {
       <Typography sx={{ mb: 2 }} variant="h3" align="center">
         Welcome {user?.first_name ?? "to Chorema"}
       </Typography>
+
+      <Divider />
 
 
       <Box
@@ -61,5 +102,7 @@ export function Component(): JSX.Element {
     </Container>
   );
 }
+
+export default Component;
 
 Component.displayName = "Dashboard";

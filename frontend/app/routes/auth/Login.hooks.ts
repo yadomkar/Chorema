@@ -71,6 +71,7 @@ type SigninResponse = {
   last_name: string;
   token: string;
   session_id: string;
+  user_id: string;
 }
 
 export type UserDetailObject = {
@@ -79,6 +80,7 @@ export type UserDetailObject = {
   last_name: string;
   token: string;
   session_id: string;
+  user_id: string;
 }
 
 export const useHandleSignin = (data: { email: string; password: string }) => {
@@ -90,17 +92,19 @@ export const useHandleSignin = (data: { email: string; password: string }) => {
 
     const res = await axios.post<SigninResponse>('/api/login/', { email, password }, { baseURL: 'http://localhost/' });
 
-    const { session_id, token, first_name, last_name } = res.data;
+    const { session_id, token, first_name, last_name, user_id } = res.data;
 
     localStorage.setItem('session_id', session_id);
     localStorage.setItem('token', token);
+    localStorage.setItem('user_id', user_id);
 
     const userObject: UserDetailObject = {
       email,
       first_name,
       last_name,
       token,
-      session_id
+      session_id,
+      user_id,
     }
 
     localStorage.setItem('user', JSON.stringify(userObject));

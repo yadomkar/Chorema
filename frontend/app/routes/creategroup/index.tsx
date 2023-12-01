@@ -21,7 +21,7 @@ const CreateGroup = () => {
 
       alert(`Group ${res.data?.group_name} created successfully `);
 
-      navigate('/dashboard');
+      navigate(`/group/edit/${res?.data?.id}`);
     } catch (error) {
       alert('Something went wrong, please try again');
     }

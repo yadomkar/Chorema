@@ -8,6 +8,7 @@ import { BaseLayout } from "../layout/BaseLayout.js";
 import { RootError } from "../layout/RootError.js";
 
 import CreateGroup from "./creategroup/index.js";
+import EditGroup from "./editgroup/index.js";
 import LandingPage from "./landingpage/index.js";
 
 /**
@@ -36,10 +37,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to='/group/create' replace />, },
           { path: "create", element: <CreateGroup />, },
-          // {
-          //   path: "account",
-          //   lazy: () => import("./settings/AccountDetails.js"),
-          // },
+          { path: "edit/:groupId", element: <EditGroup />, },
         ]
       },
       // eslint-disable-next-line

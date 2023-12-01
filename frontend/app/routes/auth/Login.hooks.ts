@@ -1,9 +1,7 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { SignInMethod, signIn } from "../../core/firebase.js";
+
+import axios from "axios";
 
 /**
  * Handles login / signup via Email
@@ -32,16 +30,104 @@ export function useHandleSubmit(
   ];
 }
 
+
+
+export function useHandleSignup(data: { email: string; password: string; first_name: string; last_name: string }) {
+  const navigate = useNavigate();
+  return React.useCallback(async (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log(data);
+
+    const { email, password, first_name, last_name } = data;
+
+
+    const payload = {
+      email,
+      password,
+      first_name,
+      last_name
+    }
+    console.log('useHandleSignup');
+
+
+    try {
+      const res = await axios.post('/api/signup/', payload, { baseURL: 'http://localhost/' });
+
+      console.log(res);
+
+      alert('Signup successful!... Redirecting to login page.!!')
+
+      navigate('/login')
+
+    } catch (err) {
+
+      alert('Signup failed! Please try again.')
+    }
+  }, [data, navigate]);
+}
+
+type SigninResponse = {
+  first_name: string;
+  last_name: string;
+  token: string;
+  session_id: string;
+  user_id: string;
+}
+
+export type UserDetailObject = {
+  email: string;
+  first_name: string;
+  last_name: string;
+  token: string;
+  session_id: string;
+  user_id: string;
+}
+
+export const useHandleSignin = (data: { email: string; password: string }) => {
+  const navigate = useNavigate();
+  return React.useCallback(async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const { email, password } = data;
+
+    const res = await axios.post<SigninResponse>('/api/login/', { email, password }, { baseURL: 'http://localhost/' });
+
+    const { session_id, token, first_name, last_name, user_id } = res.data;
+
+    localStorage.setItem('session_id', session_id);
+    localStorage.setItem('token', token);
+    localStorage.setItem('user_id', user_id);
+
+    const userObject: UserDetailObject = {
+      email,
+      first_name,
+      last_name,
+      token,
+      session_id,
+      user_id,
+    }
+
+    localStorage.setItem('user', JSON.stringify(userObject));
+
+    alert('Login successful!... Redirecting to dashboard.!!')
+
+    navigate('/dashboard')
+  }, [data, navigate]);
+}
+
 /**
  * The initial state of the Login component
  */
 export function useState() {
   return React.useState({
     email: "",
-    code: "",
+    password: "",
+    first_name: "",
+    last_name: "",
     saml: false,
-    otpSent: undefined as boolean | null | undefined,
-    error: undefined as string | null | undefined,
+    otpSent: false,
+    code: "",
+    error: null,
   });
 }
 
@@ -69,27 +155,6 @@ export function useSwitchSAML(setState: SetState) {
       }));
     },
     [setState],
-  );
-}
-
-export function useHandleSignIn(setState: SetState) {
-  const navigate = useNavigate();
-
-  return React.useCallback(
-    async function (event: React.MouseEvent<HTMLElement>) {
-      try {
-        const method = event.currentTarget.dataset.method as SignInMethod;
-        const credential = await signIn({ method });
-        if (credential.user) {
-          setState((prev) => (prev.error ? { ...prev, error: null } : prev));
-          navigate("/");
-        }
-      } catch (err) {
-        const error = (err as Error)?.message ?? "Login failed.";
-        setState((prev) => ({ ...prev, error }));
-      }
-    },
-    [navigate, setState],
   );
 }
 

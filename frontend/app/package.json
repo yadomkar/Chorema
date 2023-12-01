@@ -37,6 +37,7 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.4",
+    "axios": "^1.6.1",
     "envars": "^0.4.0",
     "happy-dom": "^10.11.2",
     "typescript": "~5.2.2",

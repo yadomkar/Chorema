@@ -1,10 +1,8 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
-import { atom, useRecoilValueLoadable } from "recoil";
+import { atom } from "recoil";
 import { useOpenLoginDialog } from "../dialogs/LoginDialog.js";
+import { UserDetailObject } from "../routes/auth/Login.hooks.js";
 import {
   auth,
   signIn,
@@ -29,29 +27,6 @@ const unsubscribeIdTokenChanged = auth.onIdTokenChanged((user) => {
 
 if (import.meta.hot) {
   import.meta.hot.dispose(unsubscribeIdTokenChanged);
-}
-
-/**
- * Returns a JSON Web Token (JWT) used to identify the user. If the user is not
- * authenticated, returns `null`. If the token is expired or will expire in the
- * next five minutes, refreshes the token and returns a new one.
- */
-export async function getIdToken() {
-  if (!idTokenPromise) {
-    idTokenPromise = new Promise<string | null>((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error("getIdToken() timeout"));
-      }, 5000);
-
-      idTokenPromiseResolve = (value: PromiseLike<string> | null) => {
-        resolve(value);
-        clearTimeout(timeout);
-        idTokenPromiseResolve = undefined;
-      };
-    });
-  }
-
-  return await idTokenPromise;
 }
 
 export const SignInMethods: SignInMethod[] = [
@@ -88,9 +63,15 @@ export const CurrentUser = atom<User | null>({
  *   }
  */
 export function useCurrentUser() {
-  const value = useRecoilValueLoadable(CurrentUser);
-  return value.state === "loading" ? undefined : value.valueOrThrow();
+
+  const token = localStorage.getItem('token');
+  const session_id = localStorage.getItem('session_id');
+
+  const user: UserDetailObject = JSON.parse(localStorage.getItem('user') || '{}');
+
+  return token && session_id ? user : undefined;
 }
+
 
 export function useSignIn() {
   const openLoginDialog = useOpenLoginDialog();
@@ -110,8 +91,15 @@ export function useSignIn() {
   );
 }
 
+export const signOut = () => {
+  return new Promise((resolve) => {
+    localStorage.clear();
+    resolve(true);
+  });
+}
+
 export function useSignOut() {
-  return React.useCallback(() => auth.signOut(), []);
+  return React.useCallback(() => signOut(), []);
 }
 
 /**
@@ -179,5 +167,6 @@ export {
   type SignInMethod,
   type SignInOptions,
   type User,
-  type UserCredential,
+  type UserCredential
 };
+

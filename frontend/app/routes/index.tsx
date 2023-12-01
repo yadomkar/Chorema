@@ -1,6 +1,5 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
-import * as React from "react";
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
@@ -8,6 +7,8 @@ import { AppLayout } from "../layout/AppLayout.js";
 import { BaseLayout } from "../layout/BaseLayout.js";
 import { RootError } from "../layout/RootError.js";
 
+import CreateGroup from "./creategroup/index.js";
+import EditGroup from "./editgroup/index.js";
 import LandingPage from "./landingpage/index.js";
 
 /**
@@ -21,9 +22,7 @@ export const router = createBrowserRouter([
     errorElement: <RootError />,
     children: [
       { path: "login", lazy: () => import("./auth/Login.js") },
-      { path: "signup", lazy: () => import("./auth/Login.js") },
-      { path: "privacy", lazy: () => import("./legal/Privacy.js") },
-      { path: "terms", lazy: () => import("./legal/Terms.js") },
+      { path: "signup", lazy: () => import("./auth/Signup.js") },
     ],
   },
   {
@@ -33,6 +32,14 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/home" replace /> },
       { path: "dashboard", lazy: () => import("./dashboard/Dashboard.js") },
+      {
+        path: "group",
+        children: [
+          { index: true, element: <Navigate to='/group/create' replace />, },
+          { path: "create", element: <CreateGroup />, },
+          { path: "edit/:groupId", element: <EditGroup />, },
+        ]
+      },
       // eslint-disable-next-line
       { path: "home", element: <LandingPage /> },
       {
@@ -46,9 +53,10 @@ export const router = createBrowserRouter([
           },
         ],
       },
-    ],
-  },
-]);
+    ]
+  }
+],
+)
 
 // Clean up on module reload (HMR)
 // https://vitejs.dev/guide/api-hmr

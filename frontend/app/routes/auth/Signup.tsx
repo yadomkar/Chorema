@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import {
   Alert,
   Button,
@@ -12,9 +9,7 @@ import {
 import { useLocation } from "react-router-dom";
 import {
   useHandleChange,
-  useHandleSignIn,
   useHandleSignup,
-  useHandleSubmit,
   useState
 } from "./Login.hooks.js";
 import { Notice } from "./Notice.js";
@@ -22,9 +17,7 @@ import { Notice } from "./Notice.js";
 export function Component(): JSX.Element {
   const [state, setState] = useState();
   const handleChange = useHandleChange(setState);
-  const handleSignIn = useHandleSignIn(setState);
   const handleSignup = useHandleSignup(state);
-  const [handleSubmit, submitInFlight] = useHandleSubmit(state);
   const { pathname } = useLocation();
   const isSignUp = pathname === "/signup";
 
@@ -65,7 +58,6 @@ export function Component(): JSX.Element {
             placeholder="Enter your First name..."
             InputLabelProps={{ shrink: true }}
             onChange={handleChange}
-            disabled={submitInFlight}
             fullWidth
             required
             style={{ marginBottom: "1rem" }}
@@ -79,7 +71,6 @@ export function Component(): JSX.Element {
             placeholder="Enter your Last name..."
             InputLabelProps={{ shrink: true }}
             onChange={handleChange}
-            disabled={submitInFlight}
             fullWidth
             required
             style={{ marginBottom: "1rem" }}
@@ -93,7 +84,6 @@ export function Component(): JSX.Element {
             placeholder="Enter your email address..."
             InputLabelProps={{ shrink: true }}
             onChange={handleChange}
-            disabled={submitInFlight}
             fullWidth
             required
             style={{ marginBottom: "1rem" }}
@@ -107,7 +97,6 @@ export function Component(): JSX.Element {
             placeholder="Enter your password..."
             InputLabelProps={{ shrink: true }}
             onChange={handleChange}
-            disabled={submitInFlight}
             fullWidth
             required
             style={{ marginBottom: "1rem" }}
@@ -122,7 +111,6 @@ export function Component(): JSX.Element {
         variant="outlined"
         size="large"
         children="Sign Up"
-        disabled={submitInFlight}
         fullWidth
       />
 

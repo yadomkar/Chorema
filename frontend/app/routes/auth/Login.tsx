@@ -13,8 +13,7 @@ import { useLocation } from "react-router-dom";
 import {
   useHandleChange,
   useHandleSignin,
-  useHandleSubmit,
-  useState,
+  useState
 } from "./Login.hooks.js";
 import { Notice } from "./Notice.js";
 
@@ -28,7 +27,6 @@ export function Component(): JSX.Element {
   const [state, setState] = useState();
   const handleChange = useHandleChange(setState);
   const handleSignIn = useHandleSignin(state);
-  const [handleSubmit, submitInFlight] = useHandleSubmit(state);
   const { pathname } = useLocation();
   const isSignUp = pathname === "/signup";
 
@@ -69,7 +67,6 @@ export function Component(): JSX.Element {
           placeholder="Enter your email address..."
           InputLabelProps={{ shrink: true }}
           onChange={handleChange}
-          disabled={submitInFlight}
           fullWidth
           required
         />
@@ -84,7 +81,6 @@ export function Component(): JSX.Element {
           placeholder="Enter your password..."
           InputLabelProps={{ shrink: true }}
           onChange={handleChange}
-          disabled={submitInFlight}
           fullWidth
           required
         />
@@ -97,7 +93,6 @@ export function Component(): JSX.Element {
         variant="outlined"
         size="large"
         children="Sign In"
-        disabled={submitInFlight}
         fullWidth
       />
 

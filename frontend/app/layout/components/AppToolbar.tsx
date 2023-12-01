@@ -29,10 +29,6 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
   });
 
 
-  function closeNotificationsMenu() {
-    setAnchorEl((x) => ({ ...x, notifications: null }));
-  }
-
   function openUserMenu() {
     setAnchorEl((x) => ({ ...x, userMenu: menuAnchorRef.current }));
   }
@@ -77,11 +73,11 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
             href="/dashboard"
             avatar={
               <Avatar
-                alt={me?.displayName}
+                alt={me?.first_name}
                 src={undefined}
               />
             }
-            label={me?.displayName || ""}
+            label={me?.first_name || ""}
           />
         )}
         {me && (

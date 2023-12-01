@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { SignInMethod, signIn } from "../../core/firebase.js";
 
 import axios from "axios";
 
@@ -33,7 +32,7 @@ export function useHandleSubmit(
 
 
 
-export function useHandleSignup(data: any) {
+export function useHandleSignup(data: { email: string; password: string; first_name: string; last_name: string }) {
   const navigate = useNavigate();
   return React.useCallback(async (event: React.FormEvent) => {
     event.preventDefault();
@@ -67,6 +66,21 @@ export function useHandleSignup(data: any) {
   }, [data, navigate]);
 }
 
+type SigninResponse = {
+  first_name: string;
+  last_name: string;
+  token: string;
+  session_id: string;
+}
+
+export type UserDetailObject = {
+  email: string;
+  first_name: string;
+  last_name: string;
+  token: string;
+  session_id: string;
+}
+
 export const useHandleSignin = (data: { email: string; password: string }) => {
   const navigate = useNavigate();
   return React.useCallback(async (event: React.FormEvent) => {
@@ -74,13 +88,22 @@ export const useHandleSignin = (data: { email: string; password: string }) => {
 
     const { email, password } = data;
 
-    const res: any = await axios.post('/api/login/', { email, password }, { baseURL: 'http://localhost/' });
+    const res = await axios.post<SigninResponse>('/api/login/', { email, password }, { baseURL: 'http://localhost/' });
 
-    const { session_id, token } = res.data;
+    const { session_id, token, first_name, last_name } = res.data;
 
     localStorage.setItem('session_id', session_id);
     localStorage.setItem('token', token);
-    localStorage.setItem('email', email);
+
+    const userObject: UserDetailObject = {
+      email,
+      first_name,
+      last_name,
+      token,
+      session_id
+    }
+
+    localStorage.setItem('user', JSON.stringify(userObject));
 
     alert('Login successful!... Redirecting to dashboard.!!')
 
@@ -94,10 +117,13 @@ export const useHandleSignin = (data: { email: string; password: string }) => {
 export function useState() {
   return React.useState({
     email: "",
-    code: "",
+    password: "",
+    first_name: "",
+    last_name: "",
     saml: false,
-    otpSent: undefined as boolean | null | undefined,
-    error: undefined as string | null | undefined,
+    otpSent: false,
+    code: "",
+    error: null,
   });
 }
 
@@ -125,27 +151,6 @@ export function useSwitchSAML(setState: SetState) {
       }));
     },
     [setState],
-  );
-}
-
-export function useHandleSignIn(setState: SetState) {
-  const navigate = useNavigate();
-
-  return React.useCallback(
-    async function (event: React.MouseEvent<HTMLElement>) {
-      try {
-        const method = event.currentTarget.dataset.method as SignInMethod;
-        const credential = await signIn({ method });
-        if (credential.user) {
-          setState((prev) => (prev.error ? { ...prev, error: null } : prev));
-          navigate("/");
-        }
-      } catch (err) {
-        const error = (err as Error)?.message ?? "Login failed.";
-        setState((prev) => ({ ...prev, error }));
-      }
-    },
-    [navigate, setState],
   );
 }
 

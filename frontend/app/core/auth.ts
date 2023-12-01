@@ -5,6 +5,7 @@ import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
 import { atom } from "recoil";
 import { useOpenLoginDialog } from "../dialogs/LoginDialog.js";
+import { UserDetailObject } from "../routes/auth/Login.hooks.js";
 import {
   auth,
   signIn,
@@ -90,10 +91,11 @@ export const CurrentUser = atom<User | null>({
 export function useCurrentUser() {
 
   const token = localStorage.getItem('token');
-  const email = localStorage.getItem('email');
   const session_id = localStorage.getItem('session_id');
 
-  return token && email && session_id ? { token, email, session_id } : null;
+  const user: UserDetailObject = JSON.parse(localStorage.getItem('user') || '{}');
+
+  return token && session_id ? user : null;
 }
 
 export function useSignIn() {

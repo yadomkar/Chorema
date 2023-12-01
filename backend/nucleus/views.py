@@ -64,9 +64,28 @@ class UserLoginView(APIView):
                 login(request, user)
                 token, created = Token.objects.get_or_create(user=user)
                 session_id = request.session.session_key
-                return Response({'token': token.key, 'session_id': session_id}, status=status.HTTP_200_OK)
+                first_name = user.first_name
+                last_name = user.last_name
+                user_id = user.id
+                return Response({
+                    'token': token.key,
+                    'session_id': session_id,
+                    'user_id': user_id,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                }, status=status.HTTP_200_OK)
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserDetailView(APIView):
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            serializer = UserSignupSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UserLogoutView(APIView):

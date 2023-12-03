@@ -36,7 +36,7 @@ export function Component(): JSX.Element {
         sx={{ mb: 2, fontWeight: 800, order: -3 }}
         variant="h1"
         align="center"
-        children={isSignUp ? "Sign Up" : "Login"}
+        children="Sign Up"
       />
 
       {state.error && (

@@ -1,4 +1,5 @@
 import { Container } from "@mui/material";
+import { Link } from "react-router-dom";
 
 import "./Landing.css";
 
@@ -32,6 +33,11 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="question">Who does the most chores in your house?</div>
+      </div>
+      <div className="dashboardButtonContainer">
+        <Link to="/dashboard" className="dashboardButton">
+          Go to Dashboard
+        </Link>
       </div>
 
       <section className="explainSection">

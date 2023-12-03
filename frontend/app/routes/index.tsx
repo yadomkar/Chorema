@@ -9,6 +9,7 @@ import { RootError } from "../layout/RootError.js";
 
 import CreateGroup from "./creategroup/index.js";
 import EditGroup from "./editgroup/index.js";
+import CreateChore from "./groups/createChore/index.js";
 import LandingPage from "./landingpage/index.js";
 
 /**
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
           { index: true, element: <Navigate to='/group/create' replace />, },
           { path: "create", element: <CreateGroup />, },
           { path: "edit/:groupId", element: <EditGroup />, },
+          { path: "create-chore/:groupId", element: <CreateChore />, },
         ]
       },
       // eslint-disable-next-line

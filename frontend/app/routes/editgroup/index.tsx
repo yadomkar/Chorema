@@ -1,13 +1,22 @@
 import { LoadingButton } from '@mui/lab';
-import { Button, Container, Divider, TextField, Typography } from "@mui/material";
+import { Button, Container, Divider, Stack, TextField, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../layout/components/Loader.js";
 import { getGroupDetails, updateGroupDetails } from "../api/index.js";
+import { useDeleteGroup } from '../utils/index.js';
 
 
-const useGetGroupDetails = (groupId?: string) => {
-  const [group, setGroup] = useState<any>({});
+export type GroupDetails = {
+  group_name: string;
+  members: string[];
+  id: string;
+  updated_at: string;
+  created_at: string;
+}
+
+export const useGetGroupDetails = (groupId?: string) => {
+  const [group, setGroup] = useState<GroupDetails>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,6 +38,9 @@ const EditGroup = () => {
   const [isUpdateMemberLoading, setIsUpdateMemberLoading] = useState(false);
 
   const { group, loading } = useGetGroupDetails(groupId);
+  const { onDeleteGroup, isSubmitInFlight: isDeleteInProgress } = useDeleteGroup(groupId ?? '');
+
+  const navigate = useNavigate();
 
   const onAddMember = useCallback(async () => {
     setIsUpdateMemberLoading(true);
@@ -42,6 +54,7 @@ const EditGroup = () => {
     }
     setIsUpdateMemberLoading(false);
   }, [group, groupId, memberId])
+
   console.log(group);
 
   if (loading) {
@@ -95,20 +108,36 @@ const EditGroup = () => {
         size="large"
         children="Add Member"
         fullWidth
-        sx={{ mt: 2 }}
+        sx={{ mt: 2, mb: 4 }}
         loading={isUpdateMemberLoading}
         onClick={onAddMember}
       />
 
-      <Button
-        color="warning"
-        type="button"
-        variant="contained"
-        size="large"
-        children="Delete group"
-        fullWidth
-        sx={{ mt: 1 }}
-      />
+
+      <Stack direction="row" spacing={2}>
+
+        <Button
+          color="primary"
+          type="button"
+          variant="contained"
+          size="large"
+          children="Add chores"
+          onClick={() => navigate('/group/create-chore/' + groupId)}
+          fullWidth
+          sx={{ mt: 1 }}
+        />
+        <LoadingButton
+          color="warning"
+          type="button"
+          variant="contained"
+          size="large"
+          children="Delete group"
+          fullWidth
+          sx={{ mt: 1 }}
+          loading={isDeleteInProgress as boolean}
+          onClick={onDeleteGroup}
+        />
+      </Stack>
     </Container>
   )
 }

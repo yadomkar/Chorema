@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import (UserSignupSerializer, UserLoginSerializer, GroupSerializer, ChoreSerializer,
-                          TransactionSerializer, DebtSerializer)
+                          TransactionSerializer, DebtSerializer, MinimizedDebtSerializer)
 from django.contrib.auth import get_user_model
 from .models import Group, Chore, Transaction, Debt, TransactionParticipant, MinimizedDebt
 
@@ -109,7 +109,6 @@ class DeleteUserView(APIView):
         return Response({'message': f'User {user_email} deleted successfully'})
 
 
-
 class RemoveUserFromGroupView(APIView):
     def post(self, request):
         group_name = request.data.get('group_name')
@@ -202,7 +201,6 @@ class UpdateGroupView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class DeleteGroupView(APIView):
@@ -348,17 +346,66 @@ class ListGroupDebtsView(APIView):
                 given = Debt.objects.filter(group=group, from_user=user)
                 taken = Debt.objects.filter(group=group, to_user=user)
                 for debt in given:
-                    debt_data[debt.to_user.get_full_name()] = debt_data.get(debt.to_user.get_full_name(),
-                                                                            0) - debt.karma
+                    debt_amount = debt_data.get(debt.to_user.get_full_name(), 0) - debt.karma
+                    debt_data[debt.to_user.get_full_name()] = debt_amount
                     debit -= debt.karma
                 for debt in taken:
-                    debt_data[debt.from_user.get_full_name()] = debt_data.get(debt.from_user.get_full_name(),
-                                                                              0) + debt.karma
+                    debt_amount = debt_data.get(debt.from_user.get_full_name(), 0) + debt.karma
+                    debt_data[debt.from_user.get_full_name()] = debt_amount
                     credit += debt.karma
-                response.append({'user': user.get_full_name(), 'debit': debit, 'credit': credit, "data": [
-                    f'User {user.get_full_name()} owes {debt_data[x]} to user {x}' if debt_data[
-                                                                                          x] > 0 else f'User {x} owes {-1 * debt_data[x]} to {user.get_full_name()}'
-                    for x in debt_data if x != user.get_full_name() and debt_data[x] != 0], })
+
+                debt_info = [
+                    {
+                        "debtor": user.get_full_name() if debt_data[x] > 0 else x,
+                        "creditor": x if debt_data[x] > 0 else user.get_full_name(),
+                        "debt_amount": abs(debt_data[x])
+                    }
+                    for x in debt_data if x != user.get_full_name() and debt_data[x] != 0
+                ]
+
+                response.append({'user': user.get_full_name(), 'debit': debit, 'credit': credit, "data": debt_info})
+
+            return Response(response, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ListGroupMinimizedDebtsView(APIView):
+    """
+    Send group id and get list of debts for that group.
+    """
+
+    def get(self, request, group_id):
+        try:
+            group = Group.objects.get(id=group_id)
+            users = group.members.all()
+
+            response = []
+            for user in users:
+                debt_data = {}
+                debit = 0
+                credit = 0
+                given = MinimizedDebt.objects.filter(group=group, from_user=user)
+                taken = MinimizedDebt.objects.filter(group=group, to_user=user)
+                for debt in given:
+                    debt_amount = debt_data.get(debt.to_user.get_full_name(), 0) - debt.karma
+                    debt_data[debt.to_user.get_full_name()] = debt_amount
+                    debit -= debt.karma
+                for debt in taken:
+                    debt_amount = debt_data.get(debt.from_user.get_full_name(), 0) + debt.karma
+                    debt_data[debt.from_user.get_full_name()] = debt_amount
+                    credit += debt.karma
+
+                debt_info = [
+                    {
+                        "debtor": user.get_full_name() if debt_data[x] > 0 else x,
+                        "creditor": x if debt_data[x] > 0 else user.get_full_name(),
+                        "debt_amount": abs(debt_data[x])
+                    }
+                    for x in debt_data if x != user.get_full_name() and debt_data[x] != 0
+                ]
+
+                response.append({'user': user.get_full_name(), 'debit': debit, 'credit': credit, "data": debt_info})
 
             return Response(response, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
@@ -376,14 +423,16 @@ class EqualizeKarmaView(APIView):
         minimized_graph = calculate_minimized_transactions(graph)
         debts = []
         for edge in minimized_graph.edges(data=True):
-            from_user = edge[0]
-            to_user = edge[1]
+            from_user = User.objects.get(id=edge[1])
+            to_user = User.objects.get(id=edge[0])
             weight = edge[2]['capacity']
 
             debt = MinimizedDebt.objects.create(from_user=from_user, to_user=to_user, karma=weight)
+            group.minimized_debts.add(debt)
             debts.append(debt)
 
-        return Response(debts, status=status.HTTP_200_OK)
+        serializer = MinimizedDebtSerializer(debts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ListGroupTransactionsView(APIView):
@@ -392,10 +441,10 @@ class ListGroupTransactionsView(APIView):
             group = Group.objects.get(id=group_id)
         except Group.DoesNotExist:
             return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
-
         transactions = Transaction.objects.filter(group=group).select_related('done_by')
         serializer = TransactionSerializer(transactions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 # ------------------ GRAPH ------------------
 

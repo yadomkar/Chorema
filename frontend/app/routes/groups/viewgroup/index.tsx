@@ -10,11 +10,18 @@ import {
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader from "../../layout/components/Loader.js";
-import { getGroupTransactions } from "../api/index.js";
+import Loader from "../../../layout/components/Loader.js";
+import { getGroupTransactions } from "../../api/index.js";
 
+export type TransactionDetail = {
+  name: string;
+  done_by_name: string;
+  created_at: string;
+  karma_value: number;
+  id: string;
+}
 const useGetGroupTransactions = (groupId: string) => {
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<TransactionDetail[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +40,7 @@ const useGetGroupTransactions = (groupId: string) => {
     }
   }, [groupId]);
 
-  return { transactions, loading };
+  return { transactions: transactions as TransactionDetail[], loading };
 };
 
 const formatDateTime = (dateString: string) => {
@@ -42,7 +49,7 @@ const formatDateTime = (dateString: string) => {
 
 const ViewGroup = () => {
   const { groupId } = useParams();
-  const { transactions, loading } = useGetGroupTransactions(groupId);
+  const { transactions, loading } = useGetGroupTransactions(groupId ?? "");
   const navigate = useNavigate();
   if (loading) {
     return <Loader />;
@@ -70,7 +77,7 @@ const ViewGroup = () => {
             display: "flex",
           }}
         >
-          <Button variant="outlined" onClick={() => { navigate('/') }}>
+          <Button variant="outlined" onClick={() => { navigate(`/group/create-transaction/${groupId}`) }}>
             Add a transaction
           </Button>
         </Box>

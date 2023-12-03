@@ -159,7 +159,9 @@ export function Component(): JSX.Element {
                     <ListItemText
                       primary={group.group_name}
                       onClick={() => {
-                        navigate(`/group/view/${group?.id}`);
+                        navigate(`/group/view/${group?.id}`, {
+                          state: { groupName: group.group_name },
+                        });
                       }}
                       secondary={`${group.members?.length ?? 0} members`}
                     />

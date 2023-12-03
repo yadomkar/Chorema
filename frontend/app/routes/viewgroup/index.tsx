@@ -7,7 +7,7 @@ import {
   Divider,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Loader from "../../layout/components/Loader.js";
 import { getGroupTransactions } from "../api/index.js";
 import { format } from "date-fns";
@@ -42,6 +42,8 @@ const formatDateTime = (dateString) => {
 const ViewGroup = () => {
   const { groupId } = useParams();
   const { transactions, loading } = useGetGroupTransactions(groupId);
+  const location = useLocation();
+  const groupName = location.state?.groupName;
 
   if (loading) {
     return <Loader />;
@@ -54,7 +56,7 @@ const ViewGroup = () => {
         variant="h3"
         align="center"
       >
-        View Group Transactions
+        {groupName} Transactions
       </Typography>
       <Divider sx={{ mb: 2 }} />
 

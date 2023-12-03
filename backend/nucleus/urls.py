@@ -2,7 +2,7 @@ from django.urls import path
 from .views import UserSignupView, UserLoginView, UserLogoutView, DeleteUserView, \
     CreateChoreView, ListChoresView, ChoreDetailView, UpdateChoreView, DeleteChoreView, CreateGroupView, \
     ListGroupsView, GroupDetailView, UpdateGroupView, DeleteGroupView, CreateTransactionView, ListGroupDebtsView, \
-    graph_image, UserDetailView
+    graph_image, UserDetailView, ListGroupTransactionsView
 
 urlpatterns = [
     path('signup/', UserSignupView.as_view(), name='signup'),
@@ -20,6 +20,7 @@ urlpatterns = [
     path('groups/update/<uuid:group_id>/', UpdateGroupView.as_view(), name='update_group'),
     path('groups/delete/<uuid:group_id>/', DeleteGroupView.as_view(), name='delete_group'),
     path('groups/debts/<uuid:group_id>/', ListGroupDebtsView.as_view(), name='list_group_debts'),
+    path('groups/transactions/<uuid:group_id>/', ListGroupTransactionsView.as_view(), name='list_group_transactions'),
 
     path('chores/create/', CreateChoreView.as_view(), name='create_chore'),
     path('chores/list/<uuid:group_id>/', ListChoresView.as_view(), name='list_chores'),

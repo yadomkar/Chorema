@@ -26,15 +26,18 @@ export const getWithAuth = (url: string, data?: object) => {
     headers: {
       Authorization: `Token ${localStorage.getItem("token")} `,
     },
-    params: data
-  })
-}
+    params: data,
+  });
+};
 
 export const getAllGroups = () => {
   return getWithAuth("groups");
-}
+};
 
-export const createNewGroup = (data: { group_name: string; members: string[] }) => {
+export const createNewGroup = (data: {
+  group_name: string;
+  members: string[];
+}) => {
   return post("groups/create", data);
 }
 
@@ -45,13 +48,20 @@ export const onDeleteAGroup = (groupId: string) => {
 
 export const getUsersList = () => {
   return getWithAuth("users");
-}
+};
 
 export const getGroupDetails = (groupId: string) => {
   return getWithAuth(`groups/${groupId}`);
-}
+};
 
-export const updateGroupDetails = (groupId: string, data: { group_name?: string, members?: string[] }) => {
+export const getGroupTransactions = (groupId: string) => {
+  return getWithAuth(`groups/transactions/${groupId}`);
+};
+
+export const updateGroupDetails = (
+  groupId: string,
+  data: { group_name?: string; members?: string[] },
+) => {
   return put(`groups/update/${groupId}`, data);
 }
 

@@ -87,10 +87,16 @@ class ChoreSerializer(serializers.ModelSerializer):
 #     created_at = serializers.DateTimeField(read_only=True)
 
 
-class TransactionSerializer(serializers.Serializer):
+class TransactionSerializer(serializers.ModelSerializer):
+    done_by_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Transaction
-        fields = '__all__'
+        fields = '__all__'  # Include 'done_by_name' if you want to list it explicitly
+
+    def get_done_by_name(self, obj):
+        return obj.done_by.get_full_name() if obj.done_by else None
+
 
 
 class DebtSerializer(serializers.Serializer):

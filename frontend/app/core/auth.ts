@@ -1,6 +1,5 @@
 import { type User, type UserCredential } from "firebase/auth";
 import * as React from "react";
-import { atom } from "recoil";
 import { UserDetailObject } from "../routes/auth/Login.hooks.js";
 import {
   auth,
@@ -32,20 +31,6 @@ export const SignInMethods: SignInMethod[] = [
   "apple.com",
   "anonymous",
 ];
-
-export const CurrentUser = atom<User | null>({
-  key: "CurrentUser",
-  dangerouslyAllowMutability: true,
-  effects: [
-    (ctx) => {
-      if (ctx.trigger === "get") {
-        return auth.onAuthStateChanged((user) => {
-          ctx.setSelf(user);
-        });
-      }
-    },
-  ],
-});
 
 /**
  * The currently logged-in (authenticated) user object.

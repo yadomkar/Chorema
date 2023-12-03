@@ -47,7 +47,7 @@ export function AppToolbar(props: AppToolbarProps): JSX.Element {
       <Toolbar>
         {/* App name / logo */}
 
-        <Link color="inherit" underline="none" href="/" component={NavLink}>
+        <Link color="inherit" underline="none" href={me ? '/dashboard' : '/'} component={NavLink}>
           <Logo />
         </Link>
 

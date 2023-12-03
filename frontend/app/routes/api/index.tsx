@@ -2,7 +2,7 @@ import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost/api/";
 axios.defaults.headers.post["Content-Type"] = "application/json";
-axios.defaults.headers.common["Authorization"] = `Token ${localStorage.getItem("token")}`;
+axios.defaults.headers.common["Authorization"] = localStorage.getItem("token") !== null ? `Token ${localStorage.getItem("token")}` : undefined;
 
 
 export const post = (url: string, data?: object) => {

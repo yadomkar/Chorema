@@ -1,28 +1,30 @@
 import axios from "axios";
 
+axios.defaults.baseURL = "http://localhost/api/";
+axios.defaults.headers.post["Content-Type"] = "application/json";
+axios.defaults.headers.common["Authorization"] = localStorage.getItem("token") !== null ? `Token ${localStorage.getItem("token")}` : undefined;
+
+
 export const post = (url: string, data?: object) => {
-  return axios.post("/api/" + url + "/", data, {
+  return axios.post(url + '/', data, {
     headers: {
-      Authorization: `Token ${localStorage.getItem("token")}`,
+      Authorization: `Token ${localStorage.getItem("token")} `,
     },
-    baseURL: "http://localhost",
-  });
-};
+  })
+}
 
 export const put = (url: string, data?: object) => {
-  return axios.put("/api/" + url + "/", data, {
+  return axios.put(url + '/', data, {
     headers: {
-      Authorization: `Token ${localStorage.getItem("token")}`,
+      Authorization: `Token ${localStorage.getItem("token")} `,
     },
-    baseURL: "http://localhost",
-  });
-};
+  })
+}
 
 export const getWithAuth = (url: string, data?: object) => {
-  return axios.get("/api/" + url + "/", {
-    baseURL: "http://localhost",
+  return axios.get(url + '/', {
     headers: {
-      Authorization: `Token ${localStorage.getItem("token")}`,
+      Authorization: `Token ${localStorage.getItem("token")} `,
     },
     params: data,
   });
@@ -37,7 +39,12 @@ export const createNewGroup = (data: {
   members: string[];
 }) => {
   return post("groups/create", data);
-};
+}
+
+export const onDeleteAGroup = (groupId: string) => {
+  return axios.delete(`groups/delete/${groupId}/`);
+}
+
 
 export const getUsersList = () => {
   return getWithAuth("users");
@@ -56,4 +63,15 @@ export const updateGroupDetails = (
   data: { group_name?: string; members?: string[] },
 ) => {
   return put(`groups/update/${groupId}`, data);
-};
+}
+
+export const addChoreToAGroup = (data: {
+  name: string,
+  description?: string,
+  karma_value: number, group: string, assigned_to?: string,
+  is_recurring?: boolean,
+  due_date?: string,
+}) => {
+  return post(`chores/create`, data);
+}
+

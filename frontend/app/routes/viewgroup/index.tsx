@@ -1,18 +1,19 @@
 import {
-  Container,
-  Typography,
-  Paper,
   Box,
-  Grid,
+  Button,
+  Container,
   Divider,
+  Grid,
+  Paper,
+  Typography,
 } from "@mui/material";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../layout/components/Loader.js";
 import { getGroupTransactions } from "../api/index.js";
-import { format } from "date-fns";
 
-const useGetGroupTransactions = (groupId) => {
+const useGetGroupTransactions = (groupId: string) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,16 +36,47 @@ const useGetGroupTransactions = (groupId) => {
   return { transactions, loading };
 };
 
-const formatDateTime = (dateString) => {
+const formatDateTime = (dateString: string) => {
   return format(new Date(dateString), "PPpp"); // Adjust date format as needed
 };
 
 const ViewGroup = () => {
   const { groupId } = useParams();
   const { transactions, loading } = useGetGroupTransactions(groupId);
-
+  const navigate = useNavigate();
   if (loading) {
     return <Loader />;
+  }
+
+  if (transactions.length === 0) {
+    return (
+      <Container maxWidth="sm" sx={{ my: 4 }}>
+        <Typography
+          sx={{ my: 2, fontWeight: 800, order: -3 }}
+          variant="h3"
+          align="center"
+        >
+          View Group Transactions
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
+
+        <Typography sx={{ my: 2 }} variant="h5" align="center">
+          You do not have any transactions yet. Add now!
+        </Typography>
+
+        <Box
+          sx={{
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
+          <Button variant="outlined" onClick={() => { navigate('/') }}>
+            Add a transaction
+          </Button>
+        </Box>
+
+      </Container>
+    );
   }
 
   return (

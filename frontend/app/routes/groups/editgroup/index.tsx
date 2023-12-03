@@ -15,7 +15,7 @@ export type GroupDetails = {
   created_at: string;
 }
 
-export const useGetGroupDetails = (groupId?: string) => {
+export const useGetGroupDetails = (groupId?: string): { group: GroupDetails, loading: boolean } => {
   const [group, setGroup] = useState<GroupDetails>();
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +28,7 @@ export const useGetGroupDetails = (groupId?: string) => {
     };
     fetchGroup();
   }, [groupId]);
-  return { group, loading };
+  return { group: group as GroupDetails, loading };
 }
 
 const EditGroup = () => {

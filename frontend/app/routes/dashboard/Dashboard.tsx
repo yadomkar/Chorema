@@ -3,7 +3,6 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Container,
   Divider,
   IconButton,
@@ -11,7 +10,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Typography,
+  Typography
 } from "@mui/material";
 
 import { Create, Delete, FindInPage } from "@mui/icons-material";
@@ -19,6 +18,7 @@ import { Create, Delete, FindInPage } from "@mui/icons-material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePageEffect } from "../../core/page.js";
+import Loader from "../../layout/components/Loader.js";
 import { getAllGroups } from "../api/index.js";
 import { useCurrentUserWithRedirection } from "../utils/index.js";
 
@@ -52,13 +52,7 @@ export function Component(): JSX.Element {
   }, [navigate]);
 
   if (loading) {
-    return (
-      <Container sx={{ py: "20vh" }} maxWidth="sm">
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <CircularProgress />
-        </Box>
-      </Container>
-    );
+    return <Loader />
   }
 
   if (groups?.length === 0) {
@@ -133,11 +127,11 @@ export function Component(): JSX.Element {
                     </>
                   }
                     sx={{
-                      border: '0.8px solid grey', borderRadius: 5, background: '#d6f5f5'
+                      border: '0.8px solid cornflowerblue', borderRadius: 3, backgroundColor: 'white'
                     }}
                   >
                     <ListItemButton sx={{ padding: 0 }}>
-                      <ListItemText primary={group.group_name} onClick={() => { }} secondary={`${group.members?.length ?? 0} members`} />
+                      <ListItemText primary={group.group_name} onClick={() => { navigate(`/group/view/${group?.id}`) }} secondary={`${group.members?.length ?? 0} members`} />
                     </ListItemButton>
 
                   </ListItem>

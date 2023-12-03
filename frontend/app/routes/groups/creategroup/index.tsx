@@ -1,8 +1,8 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { createNewGroup } from "../api/index.js";
-import { useCurrentUserWithRedirection } from "../utils/index.js";
+import { createNewGroup } from "../../api/index.js";
+import { useCurrentUserWithRedirection } from "../../utils/index.js";
 
 const CreateGroup = () => {
 

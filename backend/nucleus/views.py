@@ -386,6 +386,17 @@ class EqualizeKarmaView(APIView):
         return Response(debts, status=status.HTTP_200_OK)
 
 
+class ListGroupTransactionsView(APIView):
+    def get(self, request, group_id):
+        try:
+            group = Group.objects.get(id=group_id)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        transactions = Transaction.objects.filter(group=group).select_related('done_by')
+        serializer = TransactionSerializer(transactions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 # ------------------ GRAPH ------------------
 
 @api_view(['GET'])

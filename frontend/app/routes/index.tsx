@@ -9,6 +9,7 @@ import { RootError } from "../layout/RootError.js";
 
 import CreateGroup from "./creategroup/index.js";
 import EditGroup from "./editgroup/index.js";
+import ViewGroup from "./viewgroup/index.js";
 import LandingPage from "./landingpage/index.js";
 
 /**
@@ -35,10 +36,11 @@ export const router = createBrowserRouter([
       {
         path: "group",
         children: [
-          { index: true, element: <Navigate to='/group/create' replace />, },
-          { path: "create", element: <CreateGroup />, },
-          { path: "edit/:groupId", element: <EditGroup />, },
-        ]
+          { index: true, element: <Navigate to="/group/create" replace /> },
+          { path: "create", element: <CreateGroup /> },
+          { path: "edit/:groupId", element: <EditGroup /> },
+          { path: "view/:groupId", element: <ViewGroup /> },
+        ],
       },
       // eslint-disable-next-line
       { path: "home", element: <LandingPage /> },
@@ -53,10 +55,9 @@ export const router = createBrowserRouter([
           },
         ],
       },
-    ]
-  }
-],
-)
+    ],
+  },
+]);
 
 // Clean up on module reload (HMR)
 // https://vitejs.dev/guide/api-hmr

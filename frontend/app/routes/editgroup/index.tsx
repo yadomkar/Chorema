@@ -35,6 +35,8 @@ const EditGroup = () => {
     try {
       const res = await updateGroupDetails(groupId ?? "", { members: [memberId], group_name: group?.group_name });
       console.log(res)
+      setMemberId("");
+      alert(`Member ${memberId} added successfully `);
     } catch (error) {
       alert('Something went wrong, please try again');
     }
@@ -81,6 +83,7 @@ const EditGroup = () => {
         placeholder="Enter your email to add..."
         InputLabelProps={{ shrink: true }}
         onChange={(e) => setMemberId(e.target.value)}
+        value={memberId}
         fullWidth
         required
       />

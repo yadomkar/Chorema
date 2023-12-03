@@ -9,9 +9,10 @@ import {
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader from "../../layout/components/Loader.js";
-import { getGroupDetails, updateGroupDetails } from "../api/index.js";
-import { useDeleteGroup } from "../utils/index.js";
+import Loader from "../../../layout/components/Loader.js";
+import { getGroupDetails, updateGroupDetails } from "../../api/index.js";
+import { useDeleteGroup } from '../../utils/index.js';
+
 
 export type GroupDetails = {
   group_name: string;
@@ -21,7 +22,7 @@ export type GroupDetails = {
   created_at: string;
 };
 
-export const useGetGroupDetails = (groupId?: string) => {
+export const useGetGroupDetails = (groupId?: string): { group: GroupDetails, loading: boolean } => {
   const [group, setGroup] = useState<GroupDetails>();
   const [loading, setLoading] = useState(true);
 
@@ -34,8 +35,8 @@ export const useGetGroupDetails = (groupId?: string) => {
     };
     fetchGroup();
   }, [groupId]);
-  return { group, loading };
-};
+  return { group: group as GroupDetails, loading };
+}
 
 const EditGroup = () => {
   const { groupId } = useParams();

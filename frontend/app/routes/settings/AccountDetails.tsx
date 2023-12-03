@@ -9,9 +9,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { updateEmail, updateProfile } from "firebase/auth";
 import * as React from "react";
-import { useAuthCallback, useCurrentUser } from "../../core/auth.js";
+import { useCurrentUser } from "../../core/auth.js";
 import { usePageEffect } from "../../core/page.js";
 
 export function Component(): JSX.Element {
@@ -70,7 +69,7 @@ function useState() {
   const me = useCurrentUser();
   const [state, setState] = React.useState({
     input: {
-      displayName: me?.displayName ?? "",
+      displayName: me?.first_name ?? "",
       email: me?.email ?? "",
     },
     loading: me === undefined,
@@ -78,18 +77,18 @@ function useState() {
   });
 
   React.useEffect(() => {
-    if (me?.uid) {
+    if (me?.user_id) {
       setState((prev) => ({
         ...prev,
         input: {
           ...prev.input,
-          displayName: me.displayName ?? "",
+          displayName: me.first_name ?? "",
           email: me.email ?? "",
         },
         loading: false,
       }));
     }
-  }, [setState, me?.uid, me?.email, me?.displayName]);
+  }, [setState, me]);
 
   return [state, setState] as const;
 }
@@ -108,13 +107,7 @@ function useHandleChange(setState: SetState) {
 }
 
 function useHandleSubmit(input: Input, setState: SetState) {
-  const saveProfile = useAuthCallback(
-    async (me) => {
-      await updateProfile(me, { displayName: input.displayName });
-      await updateEmail(me, input.email);
-    },
-    [input.displayName, input.email],
-  );
+  const saveProfile = () => { /* TODO */ }
 
   return React.useCallback(
     async (event: React.FormEvent) => {

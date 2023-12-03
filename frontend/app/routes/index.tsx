@@ -7,11 +7,11 @@ import { AppLayout } from "../layout/AppLayout.js";
 import { BaseLayout } from "../layout/BaseLayout.js";
 import { RootError } from "../layout/RootError.js";
 
-import CreateGroup from "./creategroup/index.js";
-import EditGroup from "./editgroup/index.js";
 import CreateChore from "./groups/createChore/index.js";
-import ViewGroup from "./viewgroup/index.js";
+import CreateGroup from "./groups/creategroup/index.js";
+import EditGroup from "./groups/editgroup/index.js";
 import LandingPage from "./landingpage/index.js";
+import ViewGroup from "./viewgroup/index.js";
 
 /**
  * Application routes

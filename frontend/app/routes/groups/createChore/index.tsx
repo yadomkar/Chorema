@@ -45,11 +45,17 @@ const CreateChore = () => {
         my: "20px"
       }}
     >
-      <Divider sx={{ mb: 2 }} />
 
-      <Typography sx={{ mb: 1 }} variant="h1">
+      <Typography
+        sx={{ my: 2, fontWeight: 800, order: -3 }}
+        variant="h3"
+        align="center"
+      >
         Add a chore to this group
       </Typography>
+
+      <Divider sx={{ mb: 2 }} />
+
 
       <form id="chore-add-form" onSubmit={onAddChore}>
 

@@ -1,0 +1,1 @@
+import{a as t,y as o}from"./index-9a381654.js";import{O as r}from"./react-089206b9.js";import"./firebase-eea2a2de.js";function a(){return t(o,{children:t(r,{})})}a.displayName="SettingsLayout";export{a as Component};

@@ -3,21 +3,24 @@ import {
   Button,
   Container,
   Divider,
+  FormControlLabel,
   Grid,
   Paper,
-  Typography,
+  Stack,
   Switch,
+  Typography,
 } from "@mui/material";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loader from "../../../layout/components/Loader.js";
 import {
-  getGroupTransactions,
   getGroupDebts,
-  getGroupMinimizedDebts,
-  equalizeGroupDebts,
+  getGroupTransactions,
+  getSimplifiedDebts
 } from "../../api/index.js";
+
+import './viewGroup.css';
 
 export type TransactionDetail = {
   name: string;
@@ -49,24 +52,6 @@ const useGetGroupTransactions = (groupId: string) => {
   return { transactions: transactions as TransactionDetail[], loading };
 };
 
-const useEqualizeGroupDebts = (groupId: string) => {
-  const [loading, setLoading] = useState(false);
-
-  const equalizeDebts = async () => {
-    try {
-      setLoading(true);
-      await equalizeGroupDebts(groupId);
-    } catch (error) {
-      console.error("Error equalizing group debts:", error);
-      // Handle error appropriately
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { equalizeDebts, loading };
-};
-
 const formatDateTime = (dateString: string) => {
   return format(new Date(dateString), "PPpp"); // Adjust date format as needed
 };
@@ -93,10 +78,10 @@ const useGetGroupDebts = (groupId: string) => {
     }
   }, [groupId]);
 
-  const processDebts = (data) => {
-    const processedDebts = [];
-    data.forEach((userDebt) => {
-      userDebt.data.forEach((debt) => {
+  const processDebts = (data: any) => {
+    const processedDebts: any[] = [];
+    data.forEach((userDebt: any) => {
+      userDebt.data.forEach((debt: any) => {
         const debtorFirstName = debt.debtor.split(" ")[0];
         const creditorFirstName = debt.creditor.split(" ")[0];
 
@@ -120,7 +105,7 @@ const useGetGroupMinimizedDebts = (groupId: string) => {
   useEffect(() => {
     const fetchGroupDebts = async () => {
       try {
-        const response = await getGroupMinimizedDebts(groupId);
+        const response = await getSimplifiedDebts(groupId);
         processDebts(response.data);
       } catch (error) {
         console.error("Error fetching group debts:", error);
@@ -135,10 +120,10 @@ const useGetGroupMinimizedDebts = (groupId: string) => {
     }
   }, [groupId]);
 
-  const processDebts = (data) => {
-    const processedDebts = [];
-    data.forEach((userDebt) => {
-      userDebt.data.forEach((debt) => {
+  const processDebts = (data: any) => {
+    const processedDebts: any[] = [];
+    data.forEach((userDebt: any) => {
+      userDebt.data.forEach((debt: any) => {
         const debtorFirstName = debt.debtor.split(" ")[0];
         const creditorFirstName = debt.creditor.split(" ")[0];
 
@@ -165,23 +150,19 @@ const ViewGroup = () => {
   const { debts, loading: loadingDebts } = useGetGroupDebts(groupId ?? "");
   const { minimizedDebts, loading: loadingMinimizedDebts } =
     useGetGroupMinimizedDebts(groupId ?? "");
-  const { equalize, loading: loadingEqualize } = useEqualizeGroupDebts(
-    groupId ?? "",
-  );
   const location = useLocation();
   const groupName = location.state?.groupName;
 
   const loading =
     loadingTransactions ||
     loadingDebts ||
-    loadingMinimizedDebts ||
-    loadingEqualize;
+    loadingMinimizedDebts;
 
   if (loading) {
     return <Loader />;
   }
 
-  const toggleDebtsView = (event) => {
+  const toggleDebtsView = (event: any) => {
     setIsMinimized(event.target.checked);
   };
 
@@ -195,7 +176,7 @@ const ViewGroup = () => {
           variant="h3"
           align="center"
         >
-          View Group Transactions
+          View Transactions history
         </Typography>
         <Divider sx={{ mb: 2 }} />
 
@@ -231,13 +212,6 @@ const ViewGroup = () => {
           align="center"
         >
           {groupName}
-          <Button
-            children="Add a transaction"
-            variant="outlined"
-            onClick={() => navigate(`/group/create-transaction/${groupId}`)}
-            // fullWidth
-            sx={{ mx: 1 }}
-          />
         </Typography>
         <Divider sx={{ mb: 2 }} />
         <Container maxWidth="sm" sx={{ my: 4 }}>
@@ -250,14 +224,27 @@ const ViewGroup = () => {
             sx={{ my: 2, fontWeight: 800 }}
             variant="h4"
             align="center"
+            display="flex"
+            justifyContent="center"
           >
             Group Debts
           </Typography>
-          <Switch
-            checked={isMinimized}
-            onChange={toggleDebtsView}
-            color="primary"
-          />
+
+          <Stack direction="row" justifyContent={"space-between"}>
+            <Typography sx={{ my: 2 }} className="viewDetailed" onClick={() => navigate(`/group/balances/${groupId}`)}>View Detailed</Typography>
+            <FormControlLabel
+              label="Simplify debts"
+              control={
+                <Switch
+                  checked={isMinimized}
+                  onChange={toggleDebtsView}
+                  color="primary"
+                />
+              }
+              labelPlacement="start"
+            />
+          </Stack>
+
           <Divider sx={{ mb: 2 }} />
 
           {displayedDebts.length === 0 ? (
@@ -274,7 +261,6 @@ const ViewGroup = () => {
             </Paper>
           )}
         </Container>
-        {/* <Divider sx={{ mb: 2 }} /> */}
         <Typography sx={{ my: 2, fontWeight: 800 }} variant="h4" align="center">
           Group Transaction
         </Typography>
@@ -313,8 +299,7 @@ const ViewGroup = () => {
           </Paper>
         ))}
       </Container>
-      {/* div containing empty space for the button: */}
-      {/* <div style={{ height: "100px" }} />
+      <div style={{ height: "100px" }} />
       <div
         style={{
           display: "flex",
@@ -331,8 +316,9 @@ const ViewGroup = () => {
           onClick={() => navigate(`/group/create-transaction/${groupId}`)}
           fullWidth
           sx={{ mx: 4 }}
+          size="large"
         />
-      </div> */}
+      </div>
     </>
   );
 };

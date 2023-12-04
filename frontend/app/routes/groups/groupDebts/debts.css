@@ -1,0 +1,7 @@
+.debtListItem {
+  width: 100%;
+  border: 0.4px double grey;
+  padding: 20px 10px;
+  background: white;
+  border-radius: 10px;
+}

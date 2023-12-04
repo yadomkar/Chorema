@@ -172,6 +172,7 @@ export function Component(): JSX.Element {
           onClick={onCreateGroup}
           fullWidth
           sx={{ mx: 4 }}
+          size="large"
         />
       </div>
     </>

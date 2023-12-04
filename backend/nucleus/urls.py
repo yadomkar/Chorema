@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import UserSignupView, UserLoginView, UserLogoutView, DeleteUserView, \
     CreateChoreView, ListChoresView, ChoreDetailView, UpdateChoreView, DeleteChoreView, CreateGroupView, \
     ListGroupsView, GroupDetailView, UpdateGroupView, DeleteGroupView, CreateTransactionView, ListGroupDebtsView, \

@@ -9,9 +9,10 @@ import { RootError } from "../layout/RootError.js";
 
 import CreateChore from "./groups/createChore/index.js";
 import CreateGroup from "./groups/creategroup/index.js";
+import CreateTransaction from "./groups/createTransaction/index.js";
 import EditGroup from "./groups/editgroup/index.js";
+import ViewGroup from "./groups/viewgroup/index.js";
 import LandingPage from "./landingpage/index.js";
-import ViewGroup from "./viewgroup/index.js";
 
 /**
  * Application routes
@@ -42,8 +43,9 @@ export const router = createBrowserRouter([
           { path: "edit/:groupId", element: <EditGroup />, },
           { path: "create-chore/:groupId", element: <CreateChore />, },
           { path: "view/:groupId", element: <ViewGroup /> },
+          { path: "create-transaction/:groupId", element: <CreateTransaction /> },
 
-        ]
+        ],
       },
       // eslint-disable-next-line
       { path: "home", element: <LandingPage /> },

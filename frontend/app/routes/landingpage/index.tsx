@@ -1,5 +1,12 @@
 import { Container } from "@mui/material";
 import { Link } from "react-router-dom";
+import bucketImage from '../../icons/images/bucket.png';
+import trashImage from '../../icons/images/trash-cans.png';
+import dishesImage from '../../icons/images/spray.png';
+import noteImage from '../../icons/images/note.png';
+import houseImage from '../../icons/images/house.png';
+import stickerImage from '../../icons/images/sticker.png';
+
 
 import "./Landing.css";
 
@@ -14,21 +21,21 @@ const LandingPage = () => {
             <img
               className="choreIcon"
               alt="Bucket and mop icon"
-              src={"../../icons/images/bucket.png"}
+              src={bucketImage}
             />
           </div>
           <div className="iconContain">
             <img
               className="choreIcon"
               alt="Trash and recycling bins icon"
-              src={"../../icons/images/trash-cans.png"}
+              src={trashImage}
             />
           </div>
           <div className="iconContain">
             <img
               className="choreIcon"
               alt="Dish soap and dishes icon"
-              src={"../../icons/images/spray.png"}
+              src={dishesImage}
             />
           </div>
         </div>
@@ -46,7 +53,7 @@ const LandingPage = () => {
             <img
               className="explainIcon"
               alt="Note pad icon"
-              src={"../../icons/images/note.png"}
+              src={noteImage}
             />
           </div>
           <div className="explainContent">
@@ -60,7 +67,7 @@ const LandingPage = () => {
             <img
               className="explainIcon"
               alt="House icon"
-              src={"../../icons/images/house.png"}
+              src={houseImage}
             />
           </div>
           <div className="explainContent">
@@ -74,7 +81,7 @@ const LandingPage = () => {
             <img
               className="explainIcon"
               alt="Star sticker icon"
-              src={"../../icons/images/sticker.png"}
+              src={stickerImage}
             />
           </div>
           <div className="explainContent">

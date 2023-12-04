@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { post } from "../api";
 
 import axios from "axios";
 
@@ -54,7 +53,7 @@ export function useHandleSignup(data: {
       console.log("useHandleSignup");
 
       try {
-        const res = await post("signup", payload);
+        const res = await axios.post("/api/signup/", payload);
 
         console.log(res);
 
@@ -94,7 +93,10 @@ export const useHandleSignin = (data: { email: string; password: string }) => {
 
       const { email, password } = data;
 
-      const res = await post("login", { email, password });
+      const res = await axios.post<SigninResponse>("/api/login/", {
+        email,
+        password,
+      });
 
       const { session_id, token, first_name, last_name, user_id } = res.data;
 

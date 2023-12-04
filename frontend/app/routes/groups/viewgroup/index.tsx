@@ -114,7 +114,7 @@ const useGetGroupDebts = (groupId: string) => {
 };
 
 const useGetGroupMinimizedDebts = (groupId: string) => {
-  const [debts, setDebts] = useState([]);
+  const [minimizedDebts, setMinimizedDebts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -149,10 +149,10 @@ const useGetGroupMinimizedDebts = (groupId: string) => {
         }
       });
     });
-    setDebts(processedDebts);
+    setMinimizedDebts(processedDebts);
   };
 
-  return { debts, loading };
+  return { minimizedDebts, loading };
 };
 
 const ViewGroup = () => {

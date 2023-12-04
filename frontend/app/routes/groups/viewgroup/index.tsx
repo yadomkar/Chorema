@@ -15,10 +15,9 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loader from "../../../layout/components/Loader.js";
 import {
-  equalizeGroupDebts,
   getGroupDebts,
-  getGroupMinimizedDebts,
   getGroupTransactions,
+  getSimplifiedDebts
 } from "../../api/index.js";
 
 import './viewGroup.css';
@@ -53,24 +52,6 @@ const useGetGroupTransactions = (groupId: string) => {
   return { transactions: transactions as TransactionDetail[], loading };
 };
 
-const useEqualizeGroupDebts = (groupId: string) => {
-  const [loading, setLoading] = useState(false);
-
-  const equalizeDebts = async () => {
-    try {
-      setLoading(true);
-      await equalizeGroupDebts(groupId);
-    } catch (error) {
-      console.error("Error equalizing group debts:", error);
-      // Handle error appropriately
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { equalizeDebts, loading };
-};
-
 const formatDateTime = (dateString: string) => {
   return format(new Date(dateString), "PPpp"); // Adjust date format as needed
 };
@@ -98,7 +79,7 @@ const useGetGroupDebts = (groupId: string) => {
   }, [groupId]);
 
   const processDebts = (data: any) => {
-    const processedDebts = [];
+    const processedDebts: any[] = [];
     data.forEach((userDebt: any) => {
       userDebt.data.forEach((debt: any) => {
         const debtorFirstName = debt.debtor.split(" ")[0];
@@ -124,7 +105,7 @@ const useGetGroupMinimizedDebts = (groupId: string) => {
   useEffect(() => {
     const fetchGroupDebts = async () => {
       try {
-        const response = await getGroupMinimizedDebts(groupId);
+        const response = await getSimplifiedDebts(groupId);
         processDebts(response.data);
       } catch (error) {
         console.error("Error fetching group debts:", error);
@@ -139,10 +120,10 @@ const useGetGroupMinimizedDebts = (groupId: string) => {
     }
   }, [groupId]);
 
-  const processDebts = (data) => {
-    const processedDebts = [];
-    data.forEach((userDebt) => {
-      userDebt.data.forEach((debt) => {
+  const processDebts = (data: any) => {
+    const processedDebts: any[] = [];
+    data.forEach((userDebt: any) => {
+      userDebt.data.forEach((debt: any) => {
         const debtorFirstName = debt.debtor.split(" ")[0];
         const creditorFirstName = debt.creditor.split(" ")[0];
 
@@ -169,23 +150,19 @@ const ViewGroup = () => {
   const { debts, loading: loadingDebts } = useGetGroupDebts(groupId ?? "");
   const { minimizedDebts, loading: loadingMinimizedDebts } =
     useGetGroupMinimizedDebts(groupId ?? "");
-  const { equalize, loading: loadingEqualize } = useEqualizeGroupDebts(
-    groupId ?? "",
-  );
   const location = useLocation();
   const groupName = location.state?.groupName;
 
   const loading =
     loadingTransactions ||
     loadingDebts ||
-    loadingMinimizedDebts ||
-    loadingEqualize;
+    loadingMinimizedDebts;
 
   if (loading) {
     return <Loader />;
   }
 
-  const toggleDebtsView = (event) => {
+  const toggleDebtsView = (event: any) => {
     setIsMinimized(event.target.checked);
   };
 
@@ -254,7 +231,7 @@ const ViewGroup = () => {
           </Typography>
 
           <Stack direction="row" justifyContent={"space-between"}>
-            <Typography sx={{ my: 2 }} className="viewDetailed">View Detailed</Typography>
+            <Typography sx={{ my: 2 }} className="viewDetailed" onClick={() => navigate(`/group/balances/${groupId}`)}>View Detailed</Typography>
             <FormControlLabel
               label="Simplify debts"
               control={

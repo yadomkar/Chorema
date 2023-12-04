@@ -1,5 +1,12 @@
-import { LoadingButton } from '@mui/lab';
-import { Button, Container, Divider, Stack, TextField, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import {
+  Button,
+  Container,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../../layout/components/Loader.js";
@@ -13,7 +20,7 @@ export type GroupDetails = {
   id: string;
   updated_at: string;
   created_at: string;
-}
+};
 
 export const useGetGroupDetails = (groupId?: string): { group: GroupDetails, loading: boolean } => {
   const [group, setGroup] = useState<GroupDetails>();
@@ -22,7 +29,7 @@ export const useGetGroupDetails = (groupId?: string): { group: GroupDetails, loa
   useEffect(() => {
     const fetchGroup = async () => {
       const response = await getGroupDetails(groupId ?? "");
-      const data = response.data;;
+      const data = response.data;
       setGroup(data);
       setLoading(false);
     };
@@ -38,29 +45,32 @@ const EditGroup = () => {
   const [isUpdateMemberLoading, setIsUpdateMemberLoading] = useState(false);
 
   const { group, loading } = useGetGroupDetails(groupId);
-  const { onDeleteGroup, isSubmitInFlight: isDeleteInProgress } = useDeleteGroup(groupId ?? '');
+  const { onDeleteGroup, isSubmitInFlight: isDeleteInProgress } =
+    useDeleteGroup(groupId ?? "");
 
   const navigate = useNavigate();
 
   const onAddMember = useCallback(async () => {
     setIsUpdateMemberLoading(true);
     try {
-      const res = await updateGroupDetails(groupId ?? "", { members: [memberId], group_name: group?.group_name });
-      console.log(res)
+      const res = await updateGroupDetails(groupId ?? "", {
+        members: [memberId],
+        group_name: group?.group_name,
+      });
+      console.log(res);
       setMemberId("");
       alert(`Member ${memberId} added successfully `);
     } catch (error) {
-      alert('Something went wrong, please try again');
+      alert("Something went wrong, please try again");
     }
     setIsUpdateMemberLoading(false);
-  }, [group, groupId, memberId])
+  }, [group, groupId, memberId]);
 
   console.log(group);
 
   if (loading) {
-    return <Loader />
+    return <Loader />;
   }
-
 
   return (
     <Container
@@ -71,7 +81,7 @@ const EditGroup = () => {
         justifyContent: "center",
         gap: "1rem",
         flexGrow: 0.8,
-        my: "20px"
+        my: "20px",
       }}
     >
       <Typography
@@ -79,14 +89,12 @@ const EditGroup = () => {
         variant="h3"
         align="center"
       >
-        Edit  Group {group?.group_name}
+        Edit Group {group?.group_name}
       </Typography>
 
       <Divider sx={{ mb: 2 }} />
 
-      <Typography sx={{ mb: 1 }}>
-        Add a member to this group
-      </Typography>
+      <Typography sx={{ mb: 1 }}>Add a member to this group</Typography>
       <TextField
         key="add-member"
         name="member"
@@ -113,16 +121,14 @@ const EditGroup = () => {
         onClick={onAddMember}
       />
 
-
       <Stack direction="row" spacing={2}>
-
         <Button
           color="primary"
           type="button"
           variant="contained"
           size="large"
           children="Add chores"
-          onClick={() => navigate('/group/create-chore/' + groupId)}
+          onClick={() => navigate("/group/create-chore/" + groupId)}
           fullWidth
           sx={{ mt: 1 }}
         />
@@ -139,9 +145,9 @@ const EditGroup = () => {
         />
       </Stack>
     </Container>
-  )
-}
+  );
+};
 
 export default EditGroup;
 
-EditGroup.displayName = 'EditGroup';
+EditGroup.displayName = "EditGroup";

@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Group, Chore, Transaction, Debt
+from .models import Group, Chore, Transaction, Debt, MinimizedDebt
 
 User = get_user_model()
 
@@ -98,8 +98,13 @@ class TransactionSerializer(serializers.ModelSerializer):
         return obj.done_by.get_full_name() if obj.done_by else None
 
 
-
 class DebtSerializer(serializers.Serializer):
     class Meta:
         model = Debt
+        fields = '__all__'
+
+
+class MinimizedDebtSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MinimizedDebt
         fields = '__all__'

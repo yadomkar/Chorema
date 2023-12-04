@@ -3,15 +3,24 @@ import {
   Button,
   Container,
   Divider,
+  FormControlLabel,
   Grid,
   Paper,
+  Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loader from "../../../layout/components/Loader.js";
-import { getGroupTransactions } from "../../api/index.js";
+import {
+  getGroupDebts,
+  getGroupTransactions,
+  getSimplifiedDebts
+} from "../../api/index.js";
+
+import './viewGroup.css';
 
 export type TransactionDetail = {
   name: string;
@@ -19,7 +28,7 @@ export type TransactionDetail = {
   created_at: string;
   karma_value: number;
   id: string;
-}
+};
 const useGetGroupTransactions = (groupId: string) => {
   const [transactions, setTransactions] = useState<TransactionDetail[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,13 +56,117 @@ const formatDateTime = (dateString: string) => {
   return format(new Date(dateString), "PPpp"); // Adjust date format as needed
 };
 
+const useGetGroupDebts = (groupId: string) => {
+  const [debts, setDebts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGroupDebts = async () => {
+      try {
+        const response = await getGroupDebts(groupId);
+        processDebts(response.data);
+      } catch (error) {
+        console.error("Error fetching group debts:", error);
+        // Handle error appropriately
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (groupId) {
+      fetchGroupDebts();
+    }
+  }, [groupId]);
+
+  const processDebts = (data: any) => {
+    const processedDebts: any[] = [];
+    data.forEach((userDebt: any) => {
+      userDebt.data.forEach((debt: any) => {
+        const debtorFirstName = debt.debtor.split(" ")[0];
+        const creditorFirstName = debt.creditor.split(" ")[0];
+
+        const transaction = `${debtorFirstName} owes ${creditorFirstName} ${debt.debt_amount} points`;
+
+        if (!processedDebts.includes(transaction)) {
+          processedDebts.push(transaction);
+        }
+      });
+    });
+    setDebts(processedDebts);
+  };
+
+  return { debts, loading };
+};
+
+const useGetGroupMinimizedDebts = (groupId: string) => {
+  const [minimizedDebts, setMinimizedDebts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGroupDebts = async () => {
+      try {
+        const response = await getSimplifiedDebts(groupId);
+        processDebts(response.data);
+      } catch (error) {
+        console.error("Error fetching group debts:", error);
+        // Handle error appropriately
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (groupId) {
+      fetchGroupDebts();
+    }
+  }, [groupId]);
+
+  const processDebts = (data: any) => {
+    const processedDebts: any[] = [];
+    data.forEach((userDebt: any) => {
+      userDebt.data.forEach((debt: any) => {
+        const debtorFirstName = debt.debtor.split(" ")[0];
+        const creditorFirstName = debt.creditor.split(" ")[0];
+
+        const transaction = `${debtorFirstName} owes ${creditorFirstName} ${debt.debt_amount} points`;
+
+        if (!processedDebts.includes(transaction)) {
+          processedDebts.push(transaction);
+        }
+      });
+    });
+    setMinimizedDebts(processedDebts);
+  };
+
+  return { minimizedDebts, loading };
+};
+
 const ViewGroup = () => {
   const { groupId } = useParams();
-  const { transactions, loading } = useGetGroupTransactions(groupId ?? "");
   const navigate = useNavigate();
+  const { transactions, loading: loadingTransactions } =
+    useGetGroupTransactions(groupId ?? "");
+  const [isMinimized, setIsMinimized] = useState(false);
+
+  const { debts, loading: loadingDebts } = useGetGroupDebts(groupId ?? "");
+  const { minimizedDebts, loading: loadingMinimizedDebts } =
+    useGetGroupMinimizedDebts(groupId ?? "");
+  const location = useLocation();
+  const groupName = location.state?.groupName;
+
+  const loading =
+    loadingTransactions ||
+    loadingDebts ||
+    loadingMinimizedDebts;
+
   if (loading) {
     return <Loader />;
   }
+
+  const toggleDebtsView = (event: any) => {
+    setIsMinimized(event.target.checked);
+  };
+
+  const displayedDebts = isMinimized ? minimizedDebts : debts;
 
   if (transactions.length === 0) {
     return (
@@ -63,7 +176,7 @@ const ViewGroup = () => {
           variant="h3"
           align="center"
         >
-          View Group Transactions
+          View Transactions history
         </Typography>
         <Divider sx={{ mb: 2 }} />
 
@@ -77,24 +190,79 @@ const ViewGroup = () => {
             display: "flex",
           }}
         >
-          <Button variant="outlined" onClick={() => { navigate(`/group/create-transaction/${groupId}`) }}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              navigate(`/group/create-transaction/${groupId}`);
+            }}
+          >
             Add a transaction
           </Button>
         </Box>
-
       </Container>
     );
   }
 
   return (
     <>
-      <Container maxWidth="sm" sx={{ my: 4 }}>
+      <Container maxWidth="sm" sx={{ my: 4, pb: 10 }}>
         <Typography
           sx={{ my: 2, fontWeight: 800, order: -3 }}
           variant="h3"
           align="center"
         >
-          View Group Transactions
+          {groupName}
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
+        <Container maxWidth="sm" sx={{ my: 4 }}>
+          {/* Existing code */}
+        </Container>
+
+        {/* New section for displaying debts */}
+        <Container maxWidth="sm" sx={{ my: 4 }}>
+          <Typography
+            sx={{ my: 2, fontWeight: 800 }}
+            variant="h4"
+            align="center"
+            display="flex"
+            justifyContent="center"
+          >
+            Group Debts
+          </Typography>
+
+          <Stack direction="row" justifyContent={"space-between"}>
+            <Typography sx={{ my: 2 }} className="viewDetailed" onClick={() => navigate(`/group/balances/${groupId}`)}>View Detailed</Typography>
+            <FormControlLabel
+              label="Simplify debts"
+              control={
+                <Switch
+                  checked={isMinimized}
+                  onChange={toggleDebtsView}
+                  color="primary"
+                />
+              }
+              labelPlacement="start"
+            />
+          </Stack>
+
+          <Divider sx={{ mb: 2 }} />
+
+          {displayedDebts.length === 0 ? (
+            <Typography variant="body1" align="center">
+              No debts to display.
+            </Typography>
+          ) : (
+            <Paper sx={{ p: 2 }}>
+              {displayedDebts.map((debt, index) => (
+                <Typography key={index} variant="body1" sx={{ mb: 1 }}>
+                  {debt}
+                </Typography>
+              ))}
+            </Paper>
+          )}
+        </Container>
+        <Typography sx={{ my: 2, fontWeight: 800 }} variant="h4" align="center">
+          Group Transaction
         </Typography>
         <Divider sx={{ mb: 2 }} />
 
@@ -131,6 +299,7 @@ const ViewGroup = () => {
           </Paper>
         ))}
       </Container>
+      <div style={{ height: "100px" }} />
       <div
         style={{
           display: "flex",
@@ -147,6 +316,7 @@ const ViewGroup = () => {
           onClick={() => navigate(`/group/create-transaction/${groupId}`)}
           fullWidth
           sx={{ mx: 4 }}
+          size="large"
         />
       </div>
     </>

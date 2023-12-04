@@ -11,6 +11,7 @@ import CreateChore from "./groups/createChore/index.js";
 import CreateGroup from "./groups/creategroup/index.js";
 import CreateTransaction from "./groups/createTransaction/index.js";
 import EditGroup from "./groups/editgroup/index.js";
+import DefaultDebts from "./groups/groupDebts/DebtsDetailed.js";
 import ViewGroup from "./groups/viewgroup/index.js";
 import LandingPage from "./landingpage/index.js";
 
@@ -43,6 +44,7 @@ export const router = createBrowserRouter([
           { path: "edit/:groupId", element: <EditGroup />, },
           { path: "create-chore/:groupId", element: <CreateChore />, },
           { path: "view/:groupId", element: <ViewGroup /> },
+          { path: "balances/:groupId", element: <DefaultDebts /> },
           { path: "create-transaction/:groupId", element: <CreateTransaction /> },
 
         ],

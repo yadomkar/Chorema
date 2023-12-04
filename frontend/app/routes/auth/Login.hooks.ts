@@ -53,7 +53,7 @@ export function useHandleSignup(data: {
       console.log("useHandleSignup");
 
       try {
-        const res = await axios.post("/api/signup/", payload);
+        const res = await axios.post("/signup/", payload);
 
         console.log(res);
 
@@ -93,7 +93,7 @@ export const useHandleSignin = (data: { email: string; password: string }) => {
 
       const { email, password } = data;
 
-      const res = await axios.post<SigninResponse>("/api/login/", {
+      const res = await axios.post<SigninResponse>("/login/", {
         email,
         password,
       });

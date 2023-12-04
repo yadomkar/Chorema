@@ -127,7 +127,7 @@ export function Component(): JSX.Element {
                           />
                         </IconButton>
                         <IconButton edge="end" aria-label="edit" sx={{ ml: 1 }}>
-                          <Delete onClick={() => {}} />
+                          <Delete onClick={() => { }} />
                         </IconButton>
                       </>
                     }
@@ -171,7 +171,7 @@ export function Component(): JSX.Element {
           variant="outlined"
           onClick={onCreateGroup}
           fullWidth
-          sx={{ mx: 4 }}
+          sx={{ mx: 4, backgroundColor: "white" }}
           size="large"
         />
       </div>

@@ -87,49 +87,69 @@ const ViewGroup = () => {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ my: 4 }}>
-      <Typography
-        sx={{ my: 2, fontWeight: 800, order: -3 }}
-        variant="h3"
-        align="center"
-      >
-        View Group Transactions
-      </Typography>
-      <Divider sx={{ mb: 2 }} />
+    <>
+      <Container maxWidth="sm" sx={{ my: 4 }}>
+        <Typography
+          sx={{ my: 2, fontWeight: 800, order: -3 }}
+          variant="h3"
+          align="center"
+        >
+          View Group Transactions
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
 
-      {transactions.map((transaction) => (
-        <Paper key={transaction.id} sx={{ my: 2, p: 2 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={8}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                {transaction.name}
-              </Typography>
-              <Box sx={{ my: 1 }}>
-                <Typography variant="body1">
-                  {transaction.done_by_name}
+        {transactions.map((transaction) => (
+          <Paper key={transaction.id} sx={{ my: 2, p: 2, borderRadius: 4 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={8}>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  {transaction.name}
                 </Typography>
-                <Typography variant="body2">
-                  {formatDateTime(transaction.created_at)}
+                <Box sx={{ my: 1 }}>
+                  <Typography variant="body1">
+                    {transaction.done_by_name}
+                  </Typography>
+                  <Typography variant="body2">
+                    {formatDateTime(transaction.created_at)}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid
+                item
+                xs={4}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  {Math.round(transaction.karma_value)} Points
                 </Typography>
-              </Box>
+              </Grid>
             </Grid>
-            <Grid
-              item
-              xs={4}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                {Math.round(transaction.karma_value)} Points
-              </Typography>
-            </Grid>
-          </Grid>
-        </Paper>
-      ))}
-    </Container>
+          </Paper>
+        ))}
+      </Container>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          position: "fixed",
+          width: "100%",
+          bottom: "40px",
+        }}
+      >
+        <Button
+          children="Add a transaction"
+          variant="outlined"
+          onClick={() => navigate(`/group/create-transaction/${groupId}`)}
+          fullWidth
+          sx={{ mx: 4 }}
+        />
+      </div>
+    </>
   );
 };
 

@@ -67,12 +67,12 @@ const CreateTransaction = () => {
         group: groupId ?? '',
         ...transaction,
         karma_value: (transaction?.karma_value) ? parseInt(transaction?.karma_value) : 0,
-        members: group?.members ?? []
+        users_involved: group?.members ?? []
       }
       const res = await addTransactionToAGroup(payload);
       console.log(res)
 
-      alert(`Chore ${transaction.name} added successfully `);
+      alert(`Chore ${transaction.name} completed successfully `);
       setTransaction({ name: "", karma_value: null, description: "", chore: "" });
     } catch (error) {
       alert('Something went wrong, please try again');

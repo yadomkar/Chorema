@@ -81,7 +81,7 @@ export const addTransactionToAGroup = (data: {
   description?: string;
   chore: string;
   group: string;
-  members: string[];
+  users_involved: string[];
 }) => {
   return post('/transactions/create', data);
 }

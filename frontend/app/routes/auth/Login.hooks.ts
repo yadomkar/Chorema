@@ -53,7 +53,11 @@ export function useHandleSignup(data: {
       console.log("useHandleSignup");
 
       try {
-        const res = await axios.post("/signup/", payload);
+        const res = await axios.post("/signup/", payload, {
+          headers: {
+            Authorization: undefined,
+          },
+        });
 
         console.log(res);
 
@@ -93,10 +97,18 @@ export const useHandleSignin = (data: { email: string; password: string }) => {
 
       const { email, password } = data;
 
-      const res = await axios.post<SigninResponse>("/login/", {
-        email,
-        password,
-      });
+      const res = await axios.post<SigninResponse>(
+        "/login/",
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            Authorization: undefined,
+          },
+        },
+      );
 
       const { session_id, token, first_name, last_name, user_id } = res.data;
 

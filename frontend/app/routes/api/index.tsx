@@ -75,3 +75,18 @@ export const addChoreToAGroup = (data: {
   return post(`chores/create`, data);
 }
 
+export const addTransactionToAGroup = (data: {
+  name: string,
+  karma_value?: number | null
+  description?: string;
+  chore: string;
+  group: string;
+  users_involved: string[];
+}) => {
+  return post('/transactions/create', data);
+}
+
+export const getChoresList = (groupId: string) => {
+  return getWithAuth(`chores/list/${groupId}`);
+}
+

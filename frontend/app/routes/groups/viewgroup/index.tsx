@@ -308,6 +308,7 @@ const ViewGroup = () => {
           position: "fixed",
           width: "100%",
           bottom: "40px",
+
         }}
       >
         <Button
@@ -315,7 +316,7 @@ const ViewGroup = () => {
           variant="outlined"
           onClick={() => navigate(`/group/create-transaction/${groupId}`)}
           fullWidth
-          sx={{ mx: 4 }}
+          sx={{ mx: 4, backgroundColor: "white" }}
           size="large"
         />
       </div>

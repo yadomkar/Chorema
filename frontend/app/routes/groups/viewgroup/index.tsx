@@ -331,6 +331,7 @@ const ViewGroup = () => {
           onClick={() => navigate(`/group/create-transaction/${groupId}`)}
           fullWidth
           sx={{ mx: 4 }}
+          size="large"
         />
       </div> */}
     </>

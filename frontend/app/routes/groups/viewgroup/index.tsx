@@ -3,21 +3,25 @@ import {
   Button,
   Container,
   Divider,
+  FormControlLabel,
   Grid,
   Paper,
-  Typography,
+  Stack,
   Switch,
+  Typography,
 } from "@mui/material";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loader from "../../../layout/components/Loader.js";
 import {
-  getGroupTransactions,
+  equalizeGroupDebts,
   getGroupDebts,
   getGroupMinimizedDebts,
-  equalizeGroupDebts,
+  getGroupTransactions,
 } from "../../api/index.js";
+
+import './viewGroup.css';
 
 export type TransactionDetail = {
   name: string;
@@ -93,10 +97,10 @@ const useGetGroupDebts = (groupId: string) => {
     }
   }, [groupId]);
 
-  const processDebts = (data) => {
+  const processDebts = (data: any) => {
     const processedDebts = [];
-    data.forEach((userDebt) => {
-      userDebt.data.forEach((debt) => {
+    data.forEach((userDebt: any) => {
+      userDebt.data.forEach((debt: any) => {
         const debtorFirstName = debt.debtor.split(" ")[0];
         const creditorFirstName = debt.creditor.split(" ")[0];
 
@@ -195,7 +199,7 @@ const ViewGroup = () => {
           variant="h3"
           align="center"
         >
-          View Group Transactions
+          View Transactions history
         </Typography>
         <Divider sx={{ mb: 2 }} />
 
@@ -231,13 +235,6 @@ const ViewGroup = () => {
           align="center"
         >
           {groupName}
-          <Button
-            children="Add a transaction"
-            variant="outlined"
-            onClick={() => navigate(`/group/create-transaction/${groupId}`)}
-            // fullWidth
-            sx={{ mx: 1 }}
-          />
         </Typography>
         <Divider sx={{ mb: 2 }} />
         <Container maxWidth="sm" sx={{ my: 4 }}>
@@ -250,14 +247,27 @@ const ViewGroup = () => {
             sx={{ my: 2, fontWeight: 800 }}
             variant="h4"
             align="center"
+            display="flex"
+            justifyContent="center"
           >
             Group Debts
           </Typography>
-          <Switch
-            checked={isMinimized}
-            onChange={toggleDebtsView}
-            color="primary"
-          />
+
+          <Stack direction="row" justifyContent={"space-between"}>
+            <Typography sx={{ my: 2 }} className="viewDetailed">View Detailed</Typography>
+            <FormControlLabel
+              label="Simplify debts"
+              control={
+                <Switch
+                  checked={isMinimized}
+                  onChange={toggleDebtsView}
+                  color="primary"
+                />
+              }
+              labelPlacement="start"
+            />
+          </Stack>
+
           <Divider sx={{ mb: 2 }} />
 
           {displayedDebts.length === 0 ? (
@@ -274,7 +284,6 @@ const ViewGroup = () => {
             </Paper>
           )}
         </Container>
-        {/* <Divider sx={{ mb: 2 }} /> */}
         <Typography sx={{ my: 2, fontWeight: 800 }} variant="h4" align="center">
           Group Transaction
         </Typography>
@@ -313,8 +322,7 @@ const ViewGroup = () => {
           </Paper>
         ))}
       </Container>
-      {/* div containing empty space for the button: */}
-      {/* <div style={{ height: "100px" }} />
+      <div style={{ height: "100px" }} />
       <div
         style={{
           display: "flex",
@@ -333,7 +341,7 @@ const ViewGroup = () => {
           sx={{ mx: 4 }}
           size="large"
         />
-      </div> */}
+      </div>
     </>
   );
 };

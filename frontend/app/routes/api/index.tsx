@@ -103,4 +103,23 @@ export const addTransactionToAGroup = (data: {
 
 export const getChoresList = (groupId: string) => {
   return getWithAuth(`chores/list/${groupId}`);
+}
+
+export const getDebtsForAGroup = (groupId: string, isSimplifyDebts: boolean) => {
+  return isSimplifyDebts ? getSimplifiedDebts(groupId) : getDefaultDebts(groupId);
 };
+
+export const getDefaultDebts = (groupId: string) => {
+  return getWithAuth(`groups/debts/${groupId}`);
+}
+
+export const getSimplifiedDebts = async (groupId: string) => {
+  await equalizeDebts(groupId);
+
+  return getWithAuth(`groups/minimized-debts/${groupId}`);
+}
+
+export const equalizeDebts = (groupId: string) => {
+  return getWithAuth(`groups/equalize/${groupId}`);
+}
+

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { post } from "../api";
 
 import axios from "axios";
 
@@ -30,40 +31,42 @@ export function useHandleSubmit(
   ];
 }
 
-
-
-export function useHandleSignup(data: { email: string; password: string; first_name: string; last_name: string }) {
+export function useHandleSignup(data: {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+}) {
   const navigate = useNavigate();
-  return React.useCallback(async (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log(data);
+  return React.useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
+      console.log(data);
 
-    const { email, password, first_name, last_name } = data;
+      const { email, password, first_name, last_name } = data;
 
+      const payload = {
+        email,
+        password,
+        first_name,
+        last_name,
+      };
+      console.log("useHandleSignup");
 
-    const payload = {
-      email,
-      password,
-      first_name,
-      last_name
-    }
-    console.log('useHandleSignup');
+      try {
+        const res = await post("/api/signup/", payload);
 
+        console.log(res);
 
-    try {
-      const res = await axios.post('/api/signup/', payload, { baseURL: 'http://localhost/' });
+        alert("Signup successful!... Redirecting to login page.!!");
 
-      console.log(res);
-
-      alert('Signup successful!... Redirecting to login page.!!')
-
-      navigate('/login')
-
-    } catch (err) {
-
-      alert('Signup failed! Please try again.')
-    }
-  }, [data, navigate]);
+        navigate("/login");
+      } catch (err) {
+        alert("Signup failed! Please try again.");
+      }
+    },
+    [data, navigate],
+  );
 }
 
 type SigninResponse = {
@@ -72,7 +75,7 @@ type SigninResponse = {
   token: string;
   session_id: string;
   user_id: string;
-}
+};
 
 export type UserDetailObject = {
   email: string;
@@ -81,39 +84,42 @@ export type UserDetailObject = {
   token: string;
   session_id: string;
   user_id: string;
-}
+};
 
 export const useHandleSignin = (data: { email: string; password: string }) => {
   const navigate = useNavigate();
-  return React.useCallback(async (event: React.FormEvent) => {
-    event.preventDefault();
+  return React.useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
 
-    const { email, password } = data;
+      const { email, password } = data;
 
-    const res = await axios.post<SigninResponse>('/api/login/', { email, password }, { baseURL: 'http://localhost/' });
+      const res = await post("/api/login/", { email, password });
 
-    const { session_id, token, first_name, last_name, user_id } = res.data;
+      const { session_id, token, first_name, last_name, user_id } = res.data;
 
-    localStorage.setItem('session_id', session_id);
-    localStorage.setItem('token', token);
-    localStorage.setItem('user_id', user_id);
+      localStorage.setItem("session_id", session_id);
+      localStorage.setItem("token", token);
+      localStorage.setItem("user_id", user_id);
 
-    const userObject: UserDetailObject = {
-      email,
-      first_name,
-      last_name,
-      token,
-      session_id,
-      user_id,
-    }
+      const userObject: UserDetailObject = {
+        email,
+        first_name,
+        last_name,
+        token,
+        session_id,
+        user_id,
+      };
 
-    localStorage.setItem('user', JSON.stringify(userObject));
+      localStorage.setItem("user", JSON.stringify(userObject));
 
-    alert('Login successful!... Redirecting to dashboard.!!')
+      alert("Login successful!... Redirecting to dashboard.!!");
 
-    navigate('/dashboard')
-  }, [data, navigate]);
-}
+      navigate("/dashboard");
+    },
+    [data, navigate],
+  );
+};
 
 /**
  * The initial state of the Login component

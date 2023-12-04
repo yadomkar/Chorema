@@ -1,6 +1,6 @@
 import { Container, Divider, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loader from "../../../layout/components/Loader.js";
 import { getDebtsForAGroup } from "../../api/index.js";
 import { useGetGroupDetails } from "../editgroup/index.js";
@@ -37,7 +37,6 @@ const useDebtsForAGroup = (groupId: string) => {
 
 const DefaultDebts = () => {
   const { groupId } = useParams();
-  const navigate = useNavigate();
 
   const { group, loading } = useGetGroupDetails(groupId ?? "");
   const { debts, loading: isDebtLoading, setIsSimplifyDebts, isSimplifyDebts } = useDebtsForAGroup(groupId ?? "");

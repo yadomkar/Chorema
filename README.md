@@ -7,6 +7,8 @@
 
 Chorema is a platform aimed at gamifying the process of dividing and completing household chores among members of shared living spaces. Chorema employs a ‘Karma’ system where users earn points for completing household chores. At the core of Chorema’s computational challenges is the ‘Karma Equalization’ process, which ensures that users can easily settle what they owe one another. This is underpinned by intricate algorithms which form the heart of our project.
 
+You can view the project [here](http://34.168.230.139/home)
+
 ### Karma System: Quantifying Chores
 
 One of the defining features of Chorema is its introduction of the ‘Karma’ system. The central idea is to assign a numeric value to every chore based on its complexity, effort, and urgency. Members accumulate or owe karma as chores are completed. The ‘Karma Equalizer’ algorithm optimizes the distribution of this karma, ensuring that everyone’s debts are cleared as fairly as possible.
